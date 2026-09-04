@@ -20,6 +20,8 @@ npm start
 
 Open <http://127.0.0.1:4177>. The Export Forge exposes both render engines and reports the installed runtime versions.
 
+The top-bar save control persists the normalized project in browser storage. ANIMILL restores that save after a refresh unless a fresh NANA handoff is waiting; the adjacent restore control can return to the last save on demand.
+
 Open <http://127.0.0.1:4177/nana.html> for the connected NANA audio microdrama desk. Its local preview does not call a paid provider. **Build visual launch kit in ANIMILL** transfers the canonical timing into the editor on the same origin.
 
 HyperFrames requires Node 22.12 or newer. On this Windows machine the launcher automatically selects the newer bundled Hermes Node runtime when the system Node is older.

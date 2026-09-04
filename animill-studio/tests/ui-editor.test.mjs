@@ -92,6 +92,69 @@ test('editor keeps project, inspector, timeline, and viewer state in sync', {tim
   assert.equal(result.invalidSelect, false);
   assert.deepEqual(errors, []);
 
+  const boundaryProof = await page.evaluate(() => {
+    const base = {
+      id: 'boundary-proof', name: 'Boundary proof', aspect: 'desktop_16_9', fps: 30, activeScene: 0, assets: [],
+      scenes: [{id: 'scene-1', name: 'One', duration: 3000, audio: [
+        {id: 'same', track: 'not-a-track', start: -40, dur: 9000, vol: 4, pan: -9, pitch: 0},
+      ], effects: [], blocks: [
+        {id: 'same', type: 'hero', content: 'FUTURE', x: 20, y: 20, w: 400, h: 90, start: 2000, dur: 500, motion: 'glitch-in'},
+        {id: 'same', type: 'caption', content: 'NOW', x: 20, y: 150, w: 400, h: 90, start: 0, dur: 3000},
+      ]}],
+    };
+    window.ANIMILL.loadState(base);
+    window.ANIMILL.gotoMs(100);
+    const state = window.ANIMILL.getState();
+    const future = document.querySelector(`[data-id="${state.scenes[0].blocks[0].id}"]`);
+    const pointerBeforeStart = getComputedStyle(future).pointerEvents;
+    const selectionFrameBeforeStart = document.querySelector('#selFrame').classList.contains('on');
+    window.ANIMILL.gotoMs(2200);
+    const firstTransform = document.querySelector(`[data-id="${state.scenes[0].blocks[0].id}"]`).style.transform;
+    window.ANIMILL.gotoMs(2200);
+    const secondTransform = document.querySelector(`[data-id="${state.scenes[0].blocks[0].id}"]`).style.transform;
+    return {state, pointerBeforeStart, selectionFrameBeforeStart, firstTransform, secondTransform};
+  });
+  const boundaryScene = boundaryProof.state.scenes[0];
+  assert.equal(new Set([...boundaryScene.blocks, ...boundaryScene.audio].map((item) => item.id)).size, 3, 'loaded timeline IDs must be unique');
+  assert.equal(boundaryProof.pointerBeforeStart, 'none', 'an invisible future block must not intercept viewer input');
+  assert.equal(boundaryProof.selectionFrameBeforeStart, false, 'an inactive block must not show a misleading viewer selection frame');
+  assert.equal(boundaryProof.firstTransform, boundaryProof.secondTransform, 'the same glitch frame must redraw deterministically');
+  assert.deepEqual(
+    {track: boundaryScene.audio[0].track, start: boundaryScene.audio[0].start, dur: boundaryScene.audio[0].dur, vol: boundaryScene.audio[0].vol, pan: boundaryScene.audio[0].pan, pitch: boundaryScene.audio[0].pitch},
+    {track: 'audioA', start: 0, dur: 3000, vol: 1, pan: -1, pitch: 0.1},
+    'imported audio clips must be normalized before reaching the timeline and inspector',
+  );
+  await page.click('#saveBtn');
+  await page.evaluate(() => window.ANIMILL.loadState({...window.ANIMILL.getState(), name: 'Unsaved mutation'}));
+  await page.click('#restoreBtn');
+  assert.equal(await page.evaluate(() => window.ANIMILL.getState().name), 'Boundary proof', 'Restore must reconnect to the browser save');
+  await page.reload({waitUntil: 'networkidle0'});
+  assert.equal(await page.evaluate(() => window.ANIMILL.getState().name), 'Boundary proof', 'A browser save must survive a real page reload');
+
+  await page.evaluate(() => {
+    window.ANIMILL.loadState({id: 'empty-safe', name: 'Empty scene safe', aspect: 'desktop_16_9', scenes: [{id: 'empty', name: 'Empty', duration: 1000, blocks: []}]});
+    document.querySelector('#saveBtn').click();
+  });
+  await page.reload({waitUntil: 'networkidle0'});
+  assert.equal(await page.evaluate(() => window.ANIMILL.getState().scenes[0].blocks.length), 0, 'an empty saved scene must reopen without crashing startup');
+  assert.deepEqual(errors, []);
+
+  const composeProof = await page.evaluate(() => {
+    const result = window.ANIMILL.compose({name: 'Normalized composition', scenes: [{name: 'Bad inputs', duration: -20, blocks: [
+      {id: 'repeat', type: 'hero', text: 'A', start: -100, dur: 9999},
+      {id: 'repeat', type: 'caption', text: 'B', start: 500, dur: -2},
+    ], audio: [{id: 'repeat', track: 'unknown', start: -5, dur: 999}]}]});
+    const beforeScene = window.ANIMILL.getState().activeScene;
+    const sceneAfterBadNavigation = window.ANIMILL.gotoScene('not-a-scene');
+    window.ANIMILL.gotoMs('not-a-time');
+    return {result, state: window.ANIMILL.getState(), beforeScene, sceneAfterBadNavigation};
+  });
+  assert.equal(composeProof.result.ok, true);
+  assert.equal(composeProof.state.scenes[0].duration, 1, 'automation composition must use the canonical duration rules');
+  assert.equal(new Set([...composeProof.state.scenes[0].blocks, ...composeProof.state.scenes[0].audio].map((item) => item.id)).size, 3);
+  assert.equal(composeProof.sceneAfterBadNavigation, composeProof.beforeScene, 'invalid automation navigation must keep the current scene stable');
+  assert.deepEqual(errors, []);
+
   await page.evaluate(() => window.ANIMILL.loadState({
     id: 'text-edit', name: 'Text edit', aspect: 'desktop_16_9', fps: 30, activeScene: 0, assets: [],
     scenes: [{id: 'scene-1', name: 'One', duration: 2000, audio: [], effects: [], blocks: [
