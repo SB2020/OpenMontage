@@ -457,6 +457,7 @@ textarea{min-height:72px;resize:vertical}
       </select>
       <button id="saveBtn" class="iconBtn glyphBtn" title="Save project in this browser">▣</button>
       <button id="sourceBrowserBtn" class="iconBtn glyphBtn" title="Find and add web media">◎</button>
+      <button id="nanaBtn" class="iconBtn glyphBtn" title="Open NANA audio story studio">♫</button>
       <button id="exportBtn" class="iconBtn glyphBtn" title="Render or export video">⇩</button>
       <button id="shareBtn" class="iconBtn glyphBtn" title="Share">↗</button>
       <button id="ezBtn" class="iconBtn glyphBtn" title="EZ cinema editing mode">◑</button>
@@ -2007,7 +2008,7 @@ if($('#toolDeleteBtn'))$('#toolDeleteBtn').onclick=deleteSelected;
 $('#addTextClip').onclick=()=>addBlock('hero');$('#addAudioClip').onclick=()=>addAudio();$('#addEffectClip').onclick=addEffect;
 $('#zoomIn').onclick=()=>{zoomBy(.7);renderTimeline()};$('#zoomOut').onclick=()=>{zoomBy(1.4);renderTimeline()};$('#zoomFit').onclick=()=>{fitView();renderTimeline();toast('Fit to scene')};
 $('#cmdRun').onclick=runCommand;$('#cmdInput').addEventListener('keydown',e=>{if(e.key==='Enter')runCommand()});
-$('#diagBtn').onclick=openDiag;$('#closeDiag').onclick=closeDiag;$('#sourceBrowserBtn').onclick=openSourceBrowser;$('#closeSourceBrowser').onclick=closeSourceBrowser;$('#inspectSource').onclick=inspectSourceUrl;$('#sourceUrl').addEventListener('keydown',event=>{if(event.key==='Enter')inspectSourceUrl()});$('#exportBtn').onclick=openExport;$('#closeExport').onclick=closeExport;
+$('#diagBtn').onclick=openDiag;$('#closeDiag').onclick=closeDiag;$('#sourceBrowserBtn').onclick=openSourceBrowser;$('#nanaBtn').onclick=()=>{location.href='/nana.html'};$('#closeSourceBrowser').onclick=closeSourceBrowser;$('#inspectSource').onclick=inspectSourceUrl;$('#sourceUrl').addEventListener('keydown',event=>{if(event.key==='Enter')inspectSourceUrl()});$('#exportBtn').onclick=openExport;$('#closeExport').onclick=closeExport;
 $('#saveBtn').onclick=saveLocal;$('#shareBtn').onclick=share;$('#aspectSelect').onchange=e=>{setAspect(e.target.value);renderAll()};
 $('#downloadProject').onclick=()=>download('animill-project.json','application/json',projectJSON());
 $('#renderHyperframes').onclick=()=>requestServerRender('hyperframes');
@@ -2066,11 +2067,13 @@ window.addEventListener('pointerover',e=>{
 window.addEventListener('pointerdown',e=>{ensureAudio();let el=e.target.closest&&e.target.closest(UI_HOT);if(el)uiCue('click');},true);
 
 /* ---------- init ---------- */
+let nanaHandoffLoaded=false;
+try{let handoff=localStorage.getItem('animill.handoff');if(handoff){project=normalizeProjectState(JSON.parse(handoff));localStorage.removeItem('animill.handoff');nanaHandoffLoaded=true;}}catch(error){console.warn('NANA handoff rejected:',error);localStorage.removeItem('animill.handoff');}
 project.scenes.forEach(sc=>sc.blocks.forEach((b,i)=>b.z=i+1));
 syncLoop();wireSelFrame();
 (function imageDrop(){let sw=$('#stageWrap');if(!sw)return;sw.addEventListener('dragover',e=>{e.preventDefault();sw.style.outline='2px dashed rgba(118,255,195,.6)'});sw.addEventListener('dragleave',()=>sw.style.outline='');sw.addEventListener('drop',e=>{e.preventDefault();sw.style.outline='';let files=[...(e.dataTransfer.files||[])];let img=files.find(x=>x.type.startsWith('image'));let vid=files.find(x=>x.type.startsWith('video'));if(img)addImage(URL.createObjectURL(img),{name:img.name});if(vid)addVideo(URL.createObjectURL(vid),{name:vid.name});});})();
 project.selectedId=currentScene().blocks[0].id;activeClipId=project.selectedId;
-setAspect(project.aspect);fitView();renderAll();setTimeout(()=>{scaleStage();renderTimeline();bootMode();},80);
+setAspect(project.aspect);fitView();renderAll();setTimeout(()=>{scaleStage();renderTimeline();bootMode();if(nanaHandoffLoaded)toast('NANA visual launch kit loaded','confirm');},80);
 
 /* ============================ ACCESSIBILITY ============================ */
 (function a11y(){

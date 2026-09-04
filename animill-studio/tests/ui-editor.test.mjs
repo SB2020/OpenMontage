@@ -24,7 +24,7 @@ async function waitForServer(child) {
   throw new Error('ANIMILL server did not become ready');
 }
 
-test('editor keeps project, inspector, timeline, and viewer state in sync', {timeout: 30_000}, async (t) => {
+test('editor keeps project, inspector, timeline, and viewer state in sync', {timeout: 60_000}, async (t) => {
   const executablePath = chromeCandidates.find(existsSync);
   if (!executablePath) return t.skip('Chrome or Edge is required for the editor integration test');
 
@@ -117,5 +117,16 @@ test('editor keeps project, inspector, timeline, and viewer state in sync', {tim
   assert.match(await page.$eval('#compatibilityReport', (node) => node.textContent), /liquid-gold/);
   await page.click('#allowRuntimeDifferences');
   assert.equal(await page.$eval('#renderRemotion', (button) => button.disabled), false, 'explicit approval should unlock the selected production route');
+
+  await page.goto(`${origin}/nana.html`, {waitUntil: 'networkidle0'});
+  assert.match(await page.$eval('.brand', (node) => node.textContent), /NANA STORYWORLDS/);
+  await page.click('[data-key="talkback"]');
+  await page.$eval('#projectName', (input) => { input.value = 'Talkback proof'; });
+  await page.click('#animill');
+  await page.waitForFunction(() => location.pathname === '/' && window.ANIMILL?.getState().name.includes('Talkback proof'));
+  const nanaLaunch = await page.evaluate(() => window.ANIMILL.getState());
+  assert.equal(nanaLaunch.scenes[0].name, 'Audio story · Talkback');
+  assert.ok(nanaLaunch.scenes[0].blocks.length >= 2);
+  assert.equal(await page.evaluate(() => localStorage.getItem('animill.handoff')), null, 'ANIMILL must consume the handoff once');
   assert.deepEqual(errors, []);
 });

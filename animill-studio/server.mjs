@@ -11,6 +11,7 @@ import {browserStatus, inspectSource} from './src/source-browser.mjs';
 import {exportToOpenMontage} from './src/openmontage-bridge.mjs';
 import {analyzeRuntimeCompatibility, assertRuntimeApproval, runtimeCapabilities} from './src/runtime-compatibility.mjs';
 import {materializeDataAssets} from './src/portable-assets.mjs';
+import {audioBeatPlan, exportAudioProject, normalizeAudioProject, toAnimillLaunchProject} from './src/audio-project.mjs';
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -124,6 +125,39 @@ app.post('/api/compatibility', (request, response) => {
 app.post('/api/browser/inspect', async (request, response) => {
   try {
     response.json(await inspectSource(request.body.url, request.body.mode));
+  } catch (error) {
+    response.status(400).json({error: error.message});
+  }
+});
+
+app.get('/api/audio/status', async (_request, response) => {
+  let ffmpegReady = false;
+  try { await run('ffmpeg', ['-version'], root); ffmpegReady = true; } catch {}
+  response.json({
+    local: {preview: true, ffmpegMixing: ffmpegReady, analysis: ffmpegReady},
+    providers: {
+      suno: {configured: Boolean(process.env.SUNO_API_KEY), role: 'music'},
+      elevenlabs: {configured: Boolean(process.env.ELEVENLABS_API_KEY), role: 'voice, music and SFX'},
+      openai: {configured: Boolean(process.env.OPENAI_API_KEY), role: 'voice'},
+      google: {configured: Boolean(process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY), role: 'voice'},
+      piper: {configured: Boolean(process.env.PIPER_PATH), role: 'offline voice'},
+    },
+    policy: 'No provider is called or substituted without explicit creator approval.',
+  });
+});
+
+app.post('/api/audio/plan', (request, response) => {
+  try {
+    const project = normalizeAudioProject(structuredClone(request.body.project || request.body));
+    response.json({project, beatPlan: audioBeatPlan(project), animillProject: toAnimillLaunchProject(project)});
+  } catch (error) {
+    response.status(400).json({error: error.message});
+  }
+});
+
+app.post('/api/audio/handoff', async (request, response) => {
+  try {
+    response.status(201).json(await exportAudioProject(structuredClone(request.body.project || request.body), openMontageRoot));
   } catch (error) {
     response.status(400).json({error: error.message});
   }
