@@ -1,0 +1,30 @@
+{
+  "name": "animill-render-bridge",
+  "version": "7.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node launch.mjs --watch",
+    "start": "node launch.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "proof:representative": "node scripts/representative-proof.mjs",
+    "render:hyperframes:demo": "node scripts/render-demo.mjs hyperframes",
+    "render:remotion:demo": "node scripts/render-demo.mjs remotion"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.520",
+    "@remotion/renderer": "4.0.520",
+    "express": "5.1.0",
+    "gsap": "3.13.0",
+    "hyperframes": "0.8.24",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "remotion": "4.0.520"
+  },
+  "devDependencies": {
+    "puppeteer-core": "25.9.0"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

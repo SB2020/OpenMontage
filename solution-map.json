@@ -1,0 +1,153 @@
+{
+  "schema_version": 2,
+  "goal": "Make ANIMILL a dependable visual authoring application whose editor, viewer, timeline, saved project, standalone player, HyperFrames output, and Remotion output agree on the same composition.",
+  "definition_of_done": [
+    "A creator can add, select, edit, time, layer, preview, save, reload, undo, and delete text and media without state drift or a dead control.",
+    "Paused, scrubbed, playing, standalone, HyperFrames, and Remotion views agree on visibility, timing, geometry, and base typography.",
+    "Legacy or incomplete project data is normalized atomically and invalid project data cannot corrupt the open project.",
+    "A representative multi-scene project completes both local MP4 render paths and is visually reviewed.",
+    "The primary workflow is understandable without knowing internal APIs or renderer terminology."
+  ],
+  "non_goals": [
+    "Building the separate stickman flight-simulator project.",
+    "Adding more generation providers before the editor is stable.",
+    "Starting the audio-platform pivot before ANIMILL completion gates pass."
+  ],
+  "constraints": [
+    "Preserve the existing ANIMILL workflow and user-created work.",
+    "Keep HyperFrames and Remotion explicit; never silently substitute one for the other.",
+    "Continue to support browser-local authoring and offline local rendering."
+  ],
+  "assumptions": [
+    "The timeline is the source of truth for block visibility at the playhead.",
+    "Visual media belongs on the video track and text-native objects belong on text tracks.",
+    "The current single-page editor can be stabilized before a larger component refactor."
+  ],
+  "unknowns": [
+    "Which advanced motion and effect families must have exact cross-renderer parity for the first stable release.",
+    "Which remaining controls are confusing in the user's normal screen size and project workflow.",
+    "Performance ceiling for long scenes with many blocks and simultaneous preview surfaces."
+  ],
+  "problem_formulations": [
+    {
+      "id": "forward",
+      "question": "What connected editing loop takes a user from adding an object to a trustworthy rendered result?",
+      "operator": "forward-causal",
+      "exposes": ["editor-to-render dataflow", "high fan-out project contract"],
+      "hides": ["rare failure recovery"],
+      "assumptions": ["one canonical project object"]
+    },
+    {
+      "id": "backward",
+      "question": "What must be true for the user to trust that exported video matches the viewer?",
+      "operator": "outcome-backward",
+      "exposes": ["timing parity", "geometry parity", "visual proof"],
+      "hides": ["authoring ergonomics before export"],
+      "assumptions": ["visual parity is testable with representative frames"]
+    },
+    {
+      "id": "inverse",
+      "question": "What guarantees ANIMILL feels buggy even if renderer smoke tests pass?",
+      "operator": "inverse-failure",
+      "exposes": ["dead controls", "partial loads", "CSS state overrides", "hidden primary panels"],
+      "hides": ["new feature opportunities"],
+      "assumptions": []
+    }
+  ],
+  "solution_vectors": [
+    {
+      "id": "stabilize-spine",
+      "from_formulations": ["forward", "backward", "inverse"],
+      "path": ["state-contract", "editor-loop", "viewer-timeline", "runtime-parity", "workflow-clarity", "representative-proof"],
+      "decisive_evidence": ["Fresh browser interaction suite plus visual proof from both MP4 engines on the same representative project."],
+      "cost_risk": ["Exact parity for the full legacy effect catalog may require a shared effect specification rather than renderer-specific patches."]
+    }
+  ],
+  "solution_equation": "PERFECTED ANIMILL = canonical project state + reliable editor loop + timeline-true viewer + renderer parity + understandable workflow + representative end-to-end proof",
+  "modules": [
+    {
+      "id": "state-contract",
+      "outcome": "Old, generated, and current projects enter one safe canonical state.",
+      "inputs": ["ANIMILL project object or JSON"],
+      "outputs": ["normalized project state"],
+      "depends_on": [],
+      "interface_contract": ["Load is atomic; invalid input leaves the current project unchanged.", "Blocks receive safe defaults and valid timing/track assignments."],
+      "acceptance": ["Fresh browser test loads a minimal legacy image block and rejects an empty project without state mutation."],
+      "fallback": ["Reject the project with a visible reason."],
+      "status": "verified",
+      "evidence": ["tests/ui-editor.test.mjs passes"]
+    },
+    {
+      "id": "editor-loop",
+      "outcome": "Text, geometry, timing, layer, opacity, selection, and undo controls mutate the intended object and refresh every consumer.",
+      "inputs": ["pointer, keyboard, inspector, command, and timeline actions"],
+      "outputs": ["one updated canonical project and synchronized UI"],
+      "depends_on": ["state-contract"],
+      "interface_contract": ["Every mutation is undoable.", "Displayed controls are connected to model fields."],
+      "acceptance": ["Browser test proves live text edit and undo; manual audit confirms layer and opacity controls are connected."],
+      "fallback": ["Disable any control whose behavior cannot be made truthful."],
+      "status": "verified",
+      "evidence": ["tests/ui-editor.test.mjs passes", "layer/opacity apply and command layer routing repaired"]
+    },
+    {
+      "id": "viewer-timeline",
+      "outcome": "The viewer always represents the current playhead and micro-effects cannot override object timing or transforms.",
+      "inputs": ["canonical scene plus playhead milliseconds"],
+      "outputs": ["time-correct stage frame"],
+      "depends_on": ["state-contract"],
+      "interface_contract": ["Before start and after end means invisible.", "Motion transition and active duration are separate."],
+      "acceptance": ["Browser test proves an edit cannot reveal a future block; breath micro-effect cannot override hidden state."],
+      "fallback": ["Render without a micro-effect if it conflicts with the timeline transform."],
+      "status": "verified",
+      "evidence": ["tests/ui-editor.test.mjs passes"]
+    },
+    {
+      "id": "runtime-parity",
+      "outcome": "Browser, standalone HTML, HyperFrames, and Remotion share timing, placement, and styling semantics.",
+      "inputs": ["normalized ANIMILL project"],
+      "outputs": ["matching preview and render frames"],
+      "depends_on": ["viewer-timeline"],
+      "interface_contract": ["Same start/duration/transition interpretation.", "Same base text alignment, padding, typography, geometry, and visibility."],
+      "acceptance": ["Both MP4 routes render fresh output; paired frames are visually compared; advanced effects receive a declared support result."],
+      "fallback": ["Mark an effect unsupported instead of silently changing its appearance."],
+      "status": "verified",
+      "evidence": ["Fresh HyperFrames and Remotion MP4 smoke renders complete", "base typography and alignment parity repaired", "Runtime capability report and server-enforced approval gate pass automated browser and unit tests", "Exact rotate-in proof rendered successfully in both HyperFrames and Remotion"]
+    },
+    {
+      "id": "workflow-clarity",
+      "outcome": "A creator can discover the add-edit-time-preview-export path without prior ANIMILL knowledge.",
+      "inputs": ["desktop and compact layouts"],
+      "outputs": ["visible tools, inspector, timeline, and plain-language guidance"],
+      "depends_on": ["editor-loop"],
+      "interface_contract": ["Desktop advanced mode opens its essential panels.", "Renderer additions appear at the export step rather than disrupting editing."],
+      "acceptance": ["User can complete a first edit and local export without command-line or API knowledge."],
+      "fallback": ["Provide a guided first-project mode while retaining advanced controls."],
+      "status": "verified",
+      "evidence": ["Desktop advanced mode preserves project aspect and opens tools/inspector", "Five-step first-scene guide added", "Real browser test completes edit, timeline, undo, and export-review interactions without console errors"]
+    },
+    {
+      "id": "representative-proof",
+      "outcome": "A realistic multi-scene project proves the whole workflow under normal use and failure cases.",
+      "inputs": ["fresh multi-scene text, image, audio, and effect project"],
+      "outputs": ["saved project, reopened project, standalone HTML, HyperFrames MP4, Remotion MP4, proof report"],
+      "depends_on": ["runtime-parity", "workflow-clarity"],
+      "interface_contract": ["No stale outputs or mocked success.", "Known differences are visible."],
+      "acceptance": ["All artifacts created from the same fresh input and reviewed at several timestamps."],
+      "fallback": ["Narrow the stable release effect set and explicitly mark unsupported features."],
+      "status": "verified",
+      "evidence": ["artifacts/representative-proof contains one canonical three-scene project, standalone HTML, HyperFrames HTML, both fresh MP4s, six matched timestamp frames, contact sheet, and machine-readable proof report", "Both render results are exact and complete", "FFprobe confirms AAC audio in both MP4 outputs", "Contact sheet visually reviewed across title, layered media, and finish scenes"]
+    }
+  ],
+  "integration_checks": [
+    "Add text in the UI, change its content/timing/opacity, scrub before/during/after, undo, save, and reload.",
+    "Render the same representative project through standalone HTML, HyperFrames, and Remotion and compare frames at identical timestamps.",
+    "Attempt invalid and legacy loads and verify the open project remains usable.",
+    "Exercise narrow and desktop layouts with essential editing controls reachable."
+  ],
+  "risks": [
+    "The large inline editor script increases regression risk until stable boundaries are extracted.",
+    "Legacy CSS effects do not yet have complete equivalents in both production runtimes.",
+    "Browser object URLs remain session-only and cannot be consumed by server renderers."
+  ],
+  "next_unlocked_capability": "Release the stabilized ANIMILL branch, then begin the separately gated audio-app pivot."
+}

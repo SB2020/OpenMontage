@@ -37,6 +37,8 @@
 
 Turn your AI coding assistant into a full video production studio. Describe what you want in plain language — your agent handles research, scripting, asset generation, editing, and final composition.
 
+**New: [ANIMILL Studio](docs/ANIMILL_STUDIO.md)** is the browser-based authoring frontend inside OpenMontage. Compose scenes on a visual canvas, inspect public source pages through the Lightpanda adapter, retain provenance, hand off canonical OpenMontage artifacts, and render explicitly through HyperFrames or Remotion.
+
 **Important distinction:** OpenMontage can make image-based videos, but it can also make a real **video video** for free/open-source workflows: the agent builds a corpus from free stock footage and open archives, retrieves actual motion clips, edits them into a timeline, and renders a finished piece. That is not the usual "animate a handful of stills and call it video" trick.
 
 <div align="center">
