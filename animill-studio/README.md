@@ -22,7 +22,11 @@ Open <http://127.0.0.1:4177>. The Export Forge exposes both render engines and r
 
 The top-bar save control persists the normalized project in browser storage. ANIMILL restores that save after a refresh unless a fresh NANA handoff is waiting; the adjacent restore control can return to the last save on demand.
 
+The Scenes desk can set the active scene from one millisecond through one hour, with quick presets for 1, 5, 30, and 60 minutes. The timeline ruler, zoom window, scrubber, playback, saved project, and export contract all use that same duration. One-hour authoring is browser-tested; a full one-hour MP4 render is intentionally not claimed as a performance proof.
+
 Open <http://127.0.0.1:4177/nana.html> for the connected NANA audio microdrama desk. Its local preview does not call a paid provider. **Build visual launch kit in ANIMILL** transfers the canonical timing into the editor on the same origin.
+
+NANA lists every local speech voice exposed by the browser/operating system and lets each voice beat choose one independently. Timeline clips are direct controls: drag the body to move a beat, drag either edge to resize it, or double-click to focus its text editor.
 
 HyperFrames requires Node 22.12 or newer. On this Windows machine the launcher automatically selects the newer bundled Hermes Node runtime when the system Node is older.
 

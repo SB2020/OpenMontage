@@ -18,6 +18,12 @@
 .animillClip.fx,.animillClip.sfx,.animillClip.transition{background:linear-gradient(90deg,rgba(255,79,135,.22),rgba(242,201,104,.13));color:var(--ink)}
 .animillClip.video,.animillClip.silence{background:linear-gradient(90deg,rgba(118,255,195,.16),rgba(130,221,255,.08));color:var(--ink)}
 .animillClip:active{cursor:grabbing}.animillClip.selected{border-color:var(--gold);box-shadow:0 0 20px rgba(242,201,104,.3),0 6px 16px rgba(0,0,0,.4)}
+.animillClip .edge{position:absolute;top:0;bottom:0;width:9px;z-index:2;cursor:ew-resize}
+.animillClip .edge.l{left:0}.animillClip .edge.r{right:0}
+.animillClip .edge:after{content:"";position:absolute;top:5px;bottom:5px;width:2px;background:var(--mint);opacity:0;transition:opacity .14s var(--soft)}
+.animillClip .edge.l:after{left:3px}.animillClip .edge.r:after{right:3px}
+.animillClip:hover .edge:after,.animillClip.selected .edge:after{opacity:.82}
+.animillClip.dragging{filter:brightness(1.18);box-shadow:0 0 22px color-mix(in srgb,var(--mint) 26%,transparent),0 6px 16px rgba(0,0,0,.4)}
 
 .animillPlayhead{position:absolute;width:2px;background:var(--gold);z-index:9;box-shadow:0 0 18px rgba(242,201,104,.7);pointer-events:none;will-change:left}
 .animillPlayhead:before{content:"";position:absolute;top:-1px;left:-6px;width:14px;height:11px;border:0;background:var(--gold);clip-path:polygon(50% 100%,0 0,100% 0)}

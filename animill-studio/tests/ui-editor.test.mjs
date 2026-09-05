@@ -47,8 +47,24 @@ test('editor keeps project, inspector, timeline, and viewer state in sync', {tim
   await page.evaluateOnNewDocument(() => {
     localStorage.setItem('animill.onboard', 'off');
     localStorage.setItem('animill.mode', 'adv');
+    try {
+      speechSynthesis.getVoices = () => [
+        {voiceURI: 'voice-one', name: 'Studio One', lang: 'en-US', default: true},
+        {voiceURI: 'voice-two', name: 'Studio Two', lang: 'en-GB', default: false},
+      ];
+    } catch {}
   });
   await page.goto(origin, {waitUntil: 'networkidle0'});
+  await page.hover('#addTextClip');
+  await new Promise((resolve) => setTimeout(resolve, 80));
+  const animillChromeProof = await page.evaluate(() => ({
+    light: getComputedStyle(document.querySelector('.pointerLight')).backgroundImage,
+    hoverKind: document.querySelector('#addTextClip').dataset.animillHover,
+    hot: document.body.classList.contains('hot'),
+  }));
+  assert.equal(animillChromeProof.hoverKind, 'action');
+  assert.equal(animillChromeProof.hot, true);
+  assert.match(animillChromeProof.light, /radial-gradient/);
 
   const result = await page.evaluate(() => {
     const initial = {
@@ -171,6 +187,23 @@ test('editor keeps project, inspector, timeline, and viewer state in sync', {tim
   await page.evaluate(() => { document.activeElement.blur(); document.querySelector('#undoBtn').click(); });
   assert.equal(await page.evaluate(() => window.ANIMILL.getState().scenes[0].blocks[0].content), 'BEFORE');
 
+  await page.click('[data-tab="Scenes"]');
+  await page.click('[data-scene-duration="3600000"]');
+  await page.click('#applySceneDuration');
+  const hourProof = await page.evaluate(() => ({
+    duration: window.ANIMILL.getState().scenes[0].duration,
+    max: Number(document.querySelector('#sceneDurationMs').max),
+    readout: document.querySelector('#roDur').textContent,
+    span: document.querySelector('#roSpan').textContent,
+    ruler: [...document.querySelectorAll('#ruler .tick.major span')].map((node) => node.textContent),
+  }));
+  assert.equal(hourProof.duration, 3_600_000, 'the visible scene control must support a full hour');
+  assert.equal(hourProof.max, 3_600_000);
+  assert.equal(hourProof.readout, '1:00:00.000');
+  assert.equal(hourProof.span, '1.00h');
+  assert.ok(hourProof.ruler.includes('1:00'), 'the fitted ruler must represent the hour boundary');
+  await page.evaluate(() => window.ANIMILL.setSceneDuration(2000));
+
   await page.evaluate(() => {
     window.ANIMILL.updateBlock('text-1', {effect: 'liquid-gold', micro: 'breath'});
     openExport();
@@ -201,6 +234,31 @@ test('editor keeps project, inspector, timeline, and viewer state in sync', {tim
   await page.goto(`${origin}/nana.html`, {waitUntil: 'networkidle0'});
   assert.match(await page.$eval('.brand', (node) => node.textContent), /NANA STORYWORLDS/);
   assert.equal(await page.$eval('#pointerInfo', (node) => node.getAttribute('aria-hidden')), 'true', 'NANA and ANIMILL must share the reticle information layer');
+  assert.equal(await page.$eval('.pointerLight', (node) => getComputedStyle(node).backgroundImage), animillChromeProof.light, 'NANA must share ANIMILL’s moving pointer light');
+  assert.equal(await page.$$eval('.voicePick select', (selects) => selects.length > 0 && selects.every((select) => select.options.length === 3)), true, 'every device voice plus the system default must be available per voice beat');
+  await page.select('.voicePick select', 'voice-two');
+  await page.click('#save');
+  const savedVoice = await page.evaluate(() => JSON.parse(localStorage.getItem('nana.project')).beats.find((beat) => beat.lane === 'voice'));
+  assert.deepEqual({voiceURI: savedVoice.voiceURI, voiceName: savedVoice.voiceName}, {voiceURI: 'voice-two', voiceName: 'Studio Two'});
+  await page.evaluate(() => window.scrollTo(0, 0));
+  const movableClip = await page.$('[data-id="beat-2"]');
+  const moveBox = await movableClip.boundingBox();
+  const startBeforeDrag = Number(await page.$eval('[data-row="beat-2"] [data-f="startMs"]', (input) => input.value));
+  await page.mouse.move(moveBox.x + moveBox.width / 2, moveBox.y + moveBox.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(moveBox.x + moveBox.width / 2 + 36, moveBox.y + moveBox.height / 2, {steps: 4});
+  await page.mouse.up();
+  const startAfterDrag = Number(await page.$eval('[data-row="beat-2"] [data-f="startMs"]', (input) => input.value));
+  assert.ok(startAfterDrag > startBeforeDrag, 'dragging a NANA timeline item must edit its start time');
+  const rightEdge = await page.$('[data-id="beat-2"] .edge.r');
+  const edgeBox = await rightEdge.boundingBox();
+  const durationBeforeResize = Number(await page.$eval('[data-row="beat-2"] [data-f="durationMs"]', (input) => input.value));
+  await page.mouse.move(edgeBox.x + edgeBox.width / 2, edgeBox.y + edgeBox.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(edgeBox.x + edgeBox.width / 2 + 22, edgeBox.y + edgeBox.height / 2, {steps: 3});
+  await page.mouse.up();
+  const durationAfterResize = Number(await page.$eval('[data-row="beat-2"] [data-f="durationMs"]', (input) => input.value));
+  assert.ok(durationAfterResize > durationBeforeResize, 'dragging a timeline edge must resize the beat');
   const nanaTimelineMetrics = await page.evaluate(() => {
     const rect = (selector) => document.querySelector(selector).getBoundingClientRect();
     const style = (selector) => getComputedStyle(document.querySelector(selector));
@@ -247,9 +305,9 @@ test('editor keeps project, inspector, timeline, and viewer state in sync', {tim
   assert.equal(await page.$eval('body', (node) => node.dataset.theme), 'mint');
   const timelineBox = await page.$eval('#timeline', (node) => { const rect = node.getBoundingClientRect(); const gutter = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--labelW')); return {left: rect.left, top: rect.top, width: rect.width, gutter}; });
   await page.mouse.click(timelineBox.left + timelineBox.gutter + (timelineBox.width - timelineBox.gutter) * 0.5, timelineBox.top + 10);
-  assert.match(await page.$eval('#clock', (node) => node.textContent), /^9\.0 \/ 18\.0s$/, 'timeline click must scrub the NANA playhead');
+  assert.match(await page.$eval('#clock', (node) => node.textContent), /^9\.0s \/ 18\.0s$/, 'timeline click must scrub the NANA playhead');
   await page.click('#step');
-  assert.match(await page.$eval('#clock', (node) => node.textContent), /^9\.5 \/ 18\.0s$/, 'transport step must advance from the scrubbed time');
+  assert.match(await page.$eval('#clock', (node) => node.textContent), /^9\.5s \/ 18\.0s$/, 'transport step must advance from the scrubbed time');
   await page.click('#loop');
   assert.equal(await page.$eval('#loop', (node) => node.getAttribute('aria-pressed')), 'true');
   await page.click('[data-key="talkback"]');

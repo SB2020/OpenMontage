@@ -6,7 +6,8 @@
     "Paused, scrubbed, playing, standalone, HyperFrames, and Remotion views agree on visibility, timing, geometry, and base typography.",
     "Legacy or incomplete project data is normalized atomically and invalid project data cannot corrupt the open project.",
     "A representative multi-scene project completes both local MP4 render paths and is visually reviewed.",
-    "The primary workflow is understandable without knowing internal APIs or renderer terminology."
+    "The primary workflow is understandable without knowing internal APIs or renderer terminology.",
+    "A creator can author, fit, zoom, scrub, save, and export a scene timeline up to one hour."
   ],
   "non_goals": [
     "Building the separate stickman flight-simulator project.",
@@ -58,12 +59,12 @@
     {
       "id": "stabilize-spine",
       "from_formulations": ["forward", "backward", "inverse"],
-      "path": ["state-contract", "editor-loop", "viewer-timeline", "runtime-parity", "workflow-clarity", "representative-proof"],
+      "path": ["state-contract", "editor-loop", "viewer-timeline", "long-timeline-authoring", "shared-interaction-chrome", "runtime-parity", "workflow-clarity", "representative-proof"],
       "decisive_evidence": ["Fresh browser interaction suite plus visual proof from both MP4 engines on the same representative project."],
       "cost_risk": ["Exact parity for the full legacy effect catalog may require a shared effect specification rather than renderer-specific patches."]
     }
   ],
-  "solution_equation": "PERFECTED ANIMILL = canonical project state + reliable editor loop + timeline-true viewer + renderer parity + understandable workflow + representative end-to-end proof",
+  "solution_equation": "PERFECTED ANIMILL = canonical project state + reliable editor loop + timeline-true viewer + one-hour timeline authoring + shared interaction chrome + renderer parity + understandable workflow + representative end-to-end proof",
   "modules": [
     {
       "id": "state-contract",
@@ -126,6 +127,30 @@
       "evidence": ["Desktop advanced mode preserves project aspect and opens tools/inspector", "Five-step first-scene guide added", "Real browser test completes edit, timeline, undo, and export-review interactions without console errors"]
     },
     {
+      "id": "long-timeline-authoring",
+      "outcome": "A creator can deliberately set and operate a scene timeline up to one hour.",
+      "inputs": ["active scene and requested duration from 1 to 3600000 milliseconds"],
+      "outputs": ["bounded canonical scene duration and matching ruler, zoom, scrubber, playback, save, and export timing"],
+      "depends_on": ["state-contract", "viewer-timeline"],
+      "interface_contract": ["One duration value drives every timeline consumer.", "Hour-scale time uses hour-aware labels."],
+      "acceptance": ["Fresh browser test applies the visible one-hour preset and verifies the state, maximum, ruler, duration readout, and span readout."],
+      "fallback": ["Zoom into shorter windows while preserving the full canonical duration."],
+      "status": "verified",
+      "evidence": ["animill-studio/tests/ui-editor.test.mjs passes the one-hour authoring path", "Visual review of the one-hour fitted timeline completed"]
+    },
+    {
+      "id": "shared-interaction-chrome",
+      "outcome": "ANIMILL and connected authoring surfaces use one reticle light and hover language.",
+      "inputs": ["pointer movement and hover target"],
+      "outputs": ["moving light, reticle state, hover feedback, and pointer information"],
+      "depends_on": ["workflow-clarity"],
+      "interface_contract": ["Shared chrome cannot replace a stage block's motion transform.", "Coarse pointers retain native cursor behavior."],
+      "acceptance": ["Fresh browser test proves ANIMILL and NANA share the pointer light and action-hover contract."],
+      "fallback": ["Disable decorative light while retaining native pointer and focus-visible state."],
+      "status": "verified",
+      "evidence": ["animill-studio/tests/ui-editor.test.mjs shared chrome assertions pass"]
+    },
+    {
       "id": "representative-proof",
       "outcome": "A realistic multi-scene project proves the whole workflow under normal use and failure cases.",
       "inputs": ["fresh multi-scene text, image, audio, and effect project"],
@@ -142,12 +167,15 @@
     "Add text in the UI, change its content/timing/opacity, scrub before/during/after, undo, save, and reload.",
     "Render the same representative project through standalone HTML, HyperFrames, and Remotion and compare frames at identical timestamps.",
     "Attempt invalid and legacy loads and verify the open project remains usable.",
-    "Exercise narrow and desktop layouts with essential editing controls reachable."
+    "Exercise narrow and desktop layouts with essential editing controls reachable.",
+    "Apply a one-hour scene length through the visible Scenes desk and verify every timeline readout uses it.",
+    "Compare shared reticle light and hover state in ANIMILL and NANA."
   ],
   "risks": [
     "The large inline editor script increases regression risk until stable boundaries are extracted.",
     "Legacy CSS effects do not yet have complete equivalents in both production runtimes.",
-    "Browser object URLs remain session-only and cannot be consumed by server renderers."
+    "Browser object URLs remain session-only and cannot be consumed by server renderers.",
+    "One-hour authoring behavior is verified, but a full one-hour MP4 performance render is not yet benchmarked."
   ],
-  "next_unlocked_capability": "Release the stabilized ANIMILL branch, then begin the separately gated audio-app pivot."
+  "next_unlocked_capability": "Continue the ANIMILL viewer, text, element-interface, and timeline fault sweep without adding unrelated features."
 }

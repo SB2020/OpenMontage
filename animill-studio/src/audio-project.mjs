@@ -64,6 +64,7 @@ export function normalizeAudioProject(input) {
       durationMs: clamp(Math.round(Number(beat.durationMs || 1000)), 100, durationMs - startMs),
       text: String(beat.text || `${lane} beat`).slice(0, 500), energy: clamp(Math.round(Number(beat.energy ?? 50)), 0, 100),
       provider: String(beat.provider || (lane === 'voice' ? 'unassigned-tts' : lane === 'music' ? 'unassigned-music' : 'local-preview')),
+      voiceURI: lane === 'voice' ? String(beat.voiceURI || '') : '', voiceName: lane === 'voice' ? String(beat.voiceName || 'System default').slice(0, 160) : '',
       rights: String(beat.rights || 'original-plan'), approved: beat.approved === true,
     };
   }).sort((a, b) => a.startMs - b.startMs || AUDIO_LANES.indexOf(a.lane) - AUDIO_LANES.indexOf(b.lane));

@@ -13,6 +13,16 @@ test('audio archetype becomes a canonical timed beat plan', () => {
   assert.ok(project.beats.every((beat) => beat.startMs + beat.durationMs <= project.durationMs));
 });
 
+test('selected local preview voice survives the production handoff', () => {
+  const project = normalizeAudioProject({name: 'Voices', durationMs: 18000, beats: [
+    {id: 'voice-1', lane: 'voice', startMs: 0, durationMs: 1200, text: 'Hello', energy: 50, voiceURI: 'device-voice-two', voiceName: 'Device Voice Two'},
+  ]});
+  assert.deepEqual(
+    {voiceURI: project.beats[0].voiceURI, voiceName: project.beats[0].voiceName},
+    {voiceURI: 'device-voice-two', voiceName: 'Device Voice Two'},
+  );
+});
+
 test('voice beats become an editable production-safe ANIMILL launch scene', () => {
   const launch = toAnimillLaunchProject({name: 'Signal', archetype: 'talkback', durationMs: 18000});
   assert.equal(launch.scenes.length, 1);
