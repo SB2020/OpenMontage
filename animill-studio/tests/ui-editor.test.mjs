@@ -306,12 +306,29 @@ test('editor keeps project, inspector, timeline, and viewer state in sync', {tim
   await page.mouse.up();
   const resizedBlock = await page.evaluate(() => window.ANIMILL.getState().scenes[0].blocks[0]);
   assert.ok(resizedBlock.scale > 1, 'selection-frame resize must edit canonical block scale');
+  const rotateFrame = await page.$eval('#selFrame', (node) => {
+    const frame = node.getBoundingClientRect();
+    const handle = node.querySelector('.gh.se').getBoundingClientRect();
+    return {centerX: frame.x + frame.width / 2, centerY: frame.y + frame.height / 2, handleX: handle.x + handle.width / 2, handleY: handle.y + handle.height / 2};
+  });
+  await page.keyboard.down('Alt');
+  await page.mouse.move(rotateFrame.handleX, rotateFrame.handleY);
+  await page.mouse.down();
+  await page.mouse.move(rotateFrame.centerX + 90, rotateFrame.centerY + 90, {steps: 4});
+  await page.mouse.up();
+  await page.keyboard.up('Alt');
+  const rotatedBlock = await page.evaluate(() => window.ANIMILL.getState().scenes[0].blocks[0]);
+  assert.notEqual(rotatedBlock.rotation, 0, 'Alt-dragging the selection frame must edit canonical rotation');
+  await page.focus('#bContent');
+  await page.mouse.move(1200, 900, {steps: 8});
+  assert.equal(await page.evaluate(() => document.activeElement?.id), 'bContent', 'pointer movement must not steal text inspector focus');
   await page.click('#saveBtn');
   await page.evaluate(() => window.ANIMILL.updateBlock('text-1', {x: 900}));
   await page.click('#restoreBtn');
   const restoredBlock = await page.evaluate(() => window.ANIMILL.getState().scenes[0].blocks[0]);
   assert.equal(restoredBlock.x, 100, 'browser restore must recover saved geometry');
   assert.equal(restoredBlock.scale, resizedBlock.scale, 'browser restore must recover saved scale');
+  assert.equal(restoredBlock.rotation, rotatedBlock.rotation, 'browser restore must recover saved rotation');
 
   await page.setViewport({width: 1000, height: 1000});
   await page.goto(`${origin}/nana.html`, {waitUntil: 'networkidle0'});
