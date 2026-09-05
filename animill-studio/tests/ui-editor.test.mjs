@@ -61,6 +61,10 @@ test('editor keeps project, inspector, timeline, and viewer state in sync', {tim
     light: getComputedStyle(document.querySelector('.pointerLight')).backgroundImage,
     lightTransform: getComputedStyle(document.querySelector('.pointerLight')).transform,
     lightWillChange: getComputedStyle(document.querySelector('.pointerLight')).willChange,
+    lightZ: getComputedStyle(document.querySelector('.pointerLight')).zIndex,
+    lightBlend: getComputedStyle(document.querySelector('.pointerLight')).mixBlendMode,
+    haloWidth: getComputedStyle(document.querySelector('.halo')).width,
+    haloHeight: getComputedStyle(document.querySelector('.halo')).height,
     hoverKind: document.querySelector('#addTextClip').dataset.animillHover,
     hot: document.body.classList.contains('hot'),
   }));
@@ -70,6 +74,10 @@ test('editor keeps project, inspector, timeline, and viewer state in sync', {tim
   assert.match(animillChromeProof.light, /384px/, 'the shared pointer light must keep ANIMILL’s 24rem falloff');
   assert.notEqual(animillChromeProof.lightTransform, 'none', 'the shared pointer light must move on its compositor layer');
   assert.match(animillChromeProof.lightWillChange, /transform/);
+  assert.equal(animillChromeProof.lightZ, '3', 'the shared pointer light must illuminate the app layers');
+  assert.equal(animillChromeProof.lightBlend, 'screen');
+  assert.equal(animillChromeProof.haloWidth, '46px', 'hover must not resize the reticle halo');
+  assert.equal(animillChromeProof.haloHeight, '46px', 'hover must not resize the reticle halo');
 
   const hoverRectBefore = await page.evaluate(() => { const r = document.querySelector('#addAudioClip').getBoundingClientRect(); return {x: r.x, y: r.y}; });
   await page.hover('#addAudioClip');

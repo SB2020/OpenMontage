@@ -145,10 +145,10 @@
       "outputs": ["moving light, reticle state, hover feedback, and pointer information"],
       "depends_on": ["workflow-clarity"],
       "interface_contract": ["Shared chrome cannot replace a stage block's motion transform.", "Coarse pointers retain native cursor behavior."],
-      "acceptance": ["Fresh browser test proves ANIMILL and NANA share the pointer light and action-hover contract.", "Pointer movement stays on a compositor transform layer and hover feedback does not change control geometry."],
+      "acceptance": ["Fresh browser test proves ANIMILL and NANA share the pointer light and action-hover contract.", "Pointer movement stays on a compositor transform layer above translucent authoring layers and hover feedback does not change control geometry."],
       "fallback": ["Disable decorative light while retaining native pointer and focus-visible state."],
       "status": "verified",
-      "evidence": ["animill-studio/tests/ui-editor.test.mjs shared chrome assertions pass", "Regression proof covers 24rem light falloff, compositor transform movement, and zero-pixel hover layout shift"]
+      "evidence": ["animill-studio/tests/ui-editor.test.mjs shared chrome assertions pass", "Regression proof covers 24rem light falloff, compositor transform movement, above-panel screen blending, fixed halo geometry, and zero-pixel hover layout shift", "Fresh pointer sweep across Worlds reports no hover-related layout shifts"]
     },
     {
       "id": "representative-proof",
