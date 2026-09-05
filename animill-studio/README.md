@@ -18,6 +18,11 @@ npm install
 npm start
 ```
 
+On Windows, if the system Node/npm shim fails before the launcher runs, double-click
+`start-animill.cmd` (or run it from PowerShell). It uses the bundled Hermes Node
+runtime required by HyperFrames and serves the same ANIMILL app at
+`http://127.0.0.1:4177/`.
+
 Open <http://127.0.0.1:4177>. The Export Forge exposes both render engines and reports the installed runtime versions.
 
 The top-bar save control persists the normalized project in browser storage. ANIMILL restores that save after a refresh unless a fresh NANA handoff is waiting; the adjacent restore control can return to the last save on demand.
