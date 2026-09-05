@@ -59,7 +59,7 @@
     {
       "id": "stabilize-spine",
       "from_formulations": ["forward", "backward", "inverse"],
-      "path": ["state-contract", "editor-loop", "viewer-timeline", "long-timeline-authoring", "shared-interaction-chrome", "runtime-parity", "workflow-clarity", "representative-proof"],
+      "path": ["state-contract", "editor-loop", "viewer-timeline", "long-timeline-authoring", "shared-interaction-chrome", "worlds-ui-standardization", "runtime-parity", "workflow-clarity", "representative-proof"],
       "decisive_evidence": ["Fresh browser interaction suite plus visual proof from both MP4 engines on the same representative project."],
       "cost_risk": ["Exact parity for the full legacy effect catalog may require a shared effect specification rather than renderer-specific patches."]
     }
@@ -149,6 +149,18 @@
       "fallback": ["Disable decorative light while retaining native pointer and focus-visible state."],
       "status": "verified",
       "evidence": ["animill-studio/tests/ui-editor.test.mjs shared chrome assertions pass", "Regression proof covers 24rem light falloff, compositor transform movement, above-panel screen blending, fixed halo geometry, and zero-pixel hover layout shift", "Fresh pointer sweep across Worlds reports no hover-related layout shifts"]
+    },
+    {
+      "id": "worlds-ui-standardization",
+      "outcome": "The complete existing Worlds authoring surface uses ANIMILL shell, typography, controls, timeline primitives, and state-preserving handoffs as one coherent product.",
+      "inputs": ["NANA Storyworlds UI and audio project state"],
+      "outputs": ["standardized Worlds authoring surface and integration contract"],
+      "depends_on": ["editor-loop", "long-timeline-authoring", "shared-interaction-chrome"],
+      "interface_contract": ["Existing Worlds controls remain available and truthful.", "Shell and interaction styling comes from ANIMILL tokens and shared chrome.", "No new feature family is accepted until the existing path is proven end to end."],
+      "acceptance": ["Plan is visible in docs/WORLDS_INTEGRATION_PLAN.md.", "Fresh browser proof covers shell tokens, pointer layer, hover stability, timeline controls, save/reload, and both handoff entry points."],
+      "fallback": ["Keep the capability in Worlds but visibly mark any unproven control as pending instead of expanding scope."],
+      "status": "in_progress",
+      "evidence": ["ANIMILL shell tokens and shared light/hover layer are now applied to Worlds", "End-to-end control and handoff audit remains the next execution node"]
     },
     {
       "id": "representative-proof",
