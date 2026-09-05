@@ -37,6 +37,7 @@ function prepareNanaStudioHtml(source) {
   html = html.replace('      <!-- Output preview -->', '      <!-- Output preview · moved to top by ANIMILL adapter -->');
   html = html.replace('<div id="gen-output-actions" style="display:none;padding:10px 12px;border-top:1px solid var(--border);display:none;gap:6px;flex-wrap:wrap;">', '<div id="gen-output-actions" style="display:none;padding:10px 12px;border-top:1px solid var(--border);gap:6px;flex-wrap:wrap;">');
   html = html.replace(/\s*<div class="tnav-item" onclick="navScrollTo\('tool-(?:music|prompts|project|wangp)'\)">[^<]*<\/div>/g, '');
+  html = html.replace(/\s*<div class="tnav-item" id="archive-toggle" onclick="toggleArchiveView\(\)">ARCHIVE<\/div>/, '');
   const toolsStart = html.indexOf('  const NANA_TOOLS = [');
   const toolsEnd = html.indexOf('  ];', toolsStart);
   if (toolsStart >= 0 && toolsEnd > toolsStart) {
