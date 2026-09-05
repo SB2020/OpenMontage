@@ -2225,6 +2225,8 @@ window.ANIMILL={
         let wantSound=(bl.sound!==false)&&(bl.sound!=null||sc.score||spec.score);
         if(wantSound){let ri=(typeof bl.sound==='number')?bl.sound:soundForMotion(b.motion);if(ri!=null)scene.audio.push({id:uid('aud'),track:'audioA',start:b.start,dur:320,recipe:ri,vol:bl.vol||0.18});}
       });
+      let head=sc.talkingHead||sc.talking_head||sc.avatar,headSrc=head&&(head.videoSrc||head.video_src||head.source||head.url||head.video_url);
+      if(headSrc&&!scene.blocks.some(b=>b.type==='video')){let headBlock=block('video',head.name||'Talking head',{src:headSrc,track:'video',x:0,y:0,w:ASPECTS[project.aspect]?.[0]||1920,h:ASPECTS[project.aspect]?.[1]||1080,z:0,start:0,dur:Math.min(scene.duration,Math.max(1,finite(head.duration||head.dur,scene.duration))),motion:'none',effect:'none',micro:'none',audioEnabled:false,fit:'cover'});scene.blocks.unshift(headBlock);}
       (sc.audio||[]).forEach(c=>scene.audio.push(Object.assign({id:uid('aud'),track:'audioB',dur:300,vol:0.2,start:0},c)));
       return scene;
     });
