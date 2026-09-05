@@ -20,6 +20,134 @@ const port = Number(process.env.ANIMILL_PORT || 4177);
 const jobs = new Map();
 const openMontageRoot = path.resolve(root, '..');
 const nanaStudioSource = 'E:\\e-drives\\nana_master_suite.html';
+function prepareNanaStudioHtml(source) {
+  let html = source;
+  const outputStart = html.indexOf('      <!-- Output preview -->');
+  const queueStart = html.indexOf('      <!-- Generation queue -->', outputStart);
+  const gridStart = html.indexOf('  <div class="generator-grid"');
+  if (outputStart >= 0 && queueStart > outputStart && gridStart >= 0 && gridStart < outputStart) {
+    const output = html.slice(outputStart, queueStart).replace('class="card" style="padding:0;overflow:hidden;"', 'class="card nana-output-top-card" style="padding:0;overflow:hidden;"');
+    html = html.slice(0, outputStart) + html.slice(queueStart);
+    const insertAt = html.indexOf('  <div class="generator-grid"');
+    html = html.slice(0, insertAt) + '  <!-- ANIMILL adapter: output stays above generation inputs for review-first authoring. -->\n' + output + html.slice(insertAt);
+  }
+  html = html.replace('        <!-- Mock waveform display -->', '        <!-- Real waveform appears only after a completed local job. -->');
+  html = html.replace(/\s*<div style="padding:8px 10px;background:var\(--surface2\);border:1px solid var\(--border\);border-radius:var\(--r-sm\);display:flex;align-items:center;gap:8px;">\s*<div style="flex:1;">\s*<div style="font-size:11px;font-weight:500;">(?:dark_trap_seraph_v1|hellfire_interlude_draft)\.wav<\/div>[\s\S]*?<\/div>\s*<\/div>/g, '');
+  html = html.replace('<div id="ace-history" style="display:flex;flex-direction:column;gap:6px;">', '<div id="ace-history" style="display:flex;flex-direction:column;gap:6px;"><div class="muted" style="font-size:9px;padding:8px 0;">No completed local jobs yet. History appears only after a real WAN2GP result.</div>');
+  html = html.replace('      <!-- Output preview -->', '      <!-- Output preview · moved to top by ANIMILL adapter -->');
+  html = html.replace('<div id="gen-output-actions" style="display:none;padding:10px 12px;border-top:1px solid var(--border);display:none;gap:6px;flex-wrap:wrap;">', '<div id="gen-output-actions" style="display:none;padding:10px 12px;border-top:1px solid var(--border);gap:6px;flex-wrap:wrap;">');
+  const audFileStart = html.indexOf('function loadAudacityFile(input) {');
+  const audOpenStart = html.indexOf('function audOpenTrack(', audFileStart);
+  if (audFileStart >= 0 && audOpenStart > audFileStart) {
+    html = html.slice(0, audFileStart) + `function loadAudacityFile(input) {
+  if (!input.files.length) return;
+  var f = input.files[0];
+  document.getElementById('aud-filename').textContent = f.name;
+  document.getElementById('aud-wave-empty').style.display = 'flex';
+  var empty = document.querySelector('#aud-wave-empty span');
+  if (empty) empty.textContent = 'FILE SELECTED — AUDACITY PIPE REQUIRED';
+  document.getElementById('aud-len').textContent = '0:00.000';
+}
+` + html.slice(audOpenStart);
+  }
+  const audCheckStart = html.indexOf('function checkAudacity() {');
+  const audLaunchStart = html.indexOf('function launchAudacity()', audCheckStart);
+  if (audCheckStart >= 0 && audLaunchStart > audCheckStart) {
+    html = html.slice(0, audCheckStart) + `function checkAudacity() {
+  var dot = document.getElementById('aud-status-dot');
+  var lbl = document.getElementById('aud-status-label');
+  lbl.textContent = 'MANUAL PIPE CHECK';
+  dot.style.background = '#ff8f00';
+}
+` + html.slice(audLaunchStart);
+  }
+  const audPlayStart = html.indexOf('function audPlayToggle() {');
+  const audSeekStart = html.indexOf('function audSeek(', audPlayStart);
+  if (audPlayStart >= 0 && audSeekStart > audPlayStart) {
+    html = html.slice(0, audPlayStart) + `function audPlayToggle() {
+  var out = document.getElementById('aud-wave-empty');
+  if (out) out.style.display = 'flex';
+  var empty = document.querySelector('#aud-wave-empty span');
+  if (empty) empty.textContent = 'PLAYBACK REQUIRES AUDACITY PIPE';
+}
+` + html.slice(audSeekStart);
+  }
+  const audTrackStart = html.indexOf('function audOpenTrack(');
+  const audActionStart = html.indexOf('function audAction(', audTrackStart);
+  if (audTrackStart >= 0 && audActionStart > audTrackStart) {
+    html = html.slice(0, audTrackStart) + `function audOpenTrack(id) {
+  var empty = document.querySelector('#aud-wave-empty span');
+  if (empty) empty.textContent = 'LIBRARY INDEX NOT CONNECTED';
+  var wave = document.getElementById('aud-wave-empty');
+  if (wave) wave.style.display = 'flex';
+}
+` + html.slice(audActionStart);
+  }
+  const audActionBlockStart = html.indexOf('function audAction(');
+  const heroFeedStart = html.indexOf('// ── HERO FEED ──', audActionBlockStart);
+  if (audActionBlockStart >= 0 && heroFeedStart > audActionBlockStart) {
+    html = html.slice(0, audActionBlockStart) + `function audAction(action) {
+  if (typeof window.show === 'function') window.show('Connect the Audacity mod-script-pipe before using editor actions.');
+}
+function audRunPipe() {
+  if (typeof window.show === 'function') window.show('Audacity mod-script-pipe is not connected; command was not sent.');
+}
+function audClearPipe() {
+  var cmd = document.getElementById('aud-pipe-cmd');
+  var out = document.getElementById('aud-pipe-output');
+  if (cmd) cmd.value = '';
+  if (out) out.textContent = 'pipe output...';
+}
+function audExportToLibrary() {
+  if (typeof window.show === 'function') window.show('Connect Audacity before exporting to the local library.');
+}
+
+` + html.slice(heroFeedStart);
+  }
+  const honestScript = `<script>
+(function () {
+  function notify(message) {
+    if (typeof window.show === 'function') window.show(message);
+    else console.info(message);
+  }
+  var aceWave = document.getElementById('ace-waveform');
+  var acePlay = document.getElementById('ace-play-btn');
+  if (aceWave) {
+    aceWave.removeAttribute('onclick');
+    aceWave.style.cursor = 'default';
+    aceWave.setAttribute('aria-label', 'No completed local WAN2GP output');
+  }
+  if (acePlay) {
+    acePlay.removeAttribute('onclick');
+    acePlay.setAttribute('aria-disabled', 'true');
+    acePlay.style.opacity = '0.45';
+    acePlay.onclick = function () { notify('Generate a real WAN2GP job before playback is available.'); };
+  }
+  var aceLabel = document.getElementById('ace-waveform-label');
+  if (aceLabel) aceLabel.textContent = 'NO COMPLETED LOCAL OUTPUT';
+  var aud = document.getElementById('audioeditor');
+  if (aud) {
+    var offline = document.getElementById('aud-offline-banner');
+    var guard = function (event) {
+      if (event) event.preventDefault();
+      notify('Audacity is an external pipe bridge; connect mod-script-pipe before editing or export.');
+    };
+    aud.querySelectorAll('[onclick^="audAction"], [onclick^="audRunPipe"], [onclick^="audExportToLibrary"]').forEach(function (el) {
+      el.removeAttribute('onclick');
+      el.setAttribute('aria-disabled', 'true');
+      el.style.opacity = '0.45';
+      el.onclick = guard;
+    });
+    if (offline) offline.insertAdjacentHTML('afterbegin', '<div class="muted" style="font-size:9px;line-height:1.5;margin-bottom:8px;">External bridge only. No in-browser edit/export simulation is enabled.</div>');
+  }
+})();
+</script>`;
+  html = html.replace('</body>', honestScript + '\n</body>');
+  const audit = '<div class="card nana-operational-audit" style="margin:0 0 14px;padding:12px;border-left:2px solid var(--mint);"><div class="card-title">OPERATIONAL AUDIT</div><div class="muted" style="font-size:9px;line-height:1.6;margin-top:6px;"><b style="color:var(--mint);">Wav2Lip</b> uses the real local NANA backend via <code>/api/lipsync</code> and job polling. <b style="color:var(--gold);">Veo / Sync.so</b> remain provider-gated until connected. <b style="color:var(--gold);">ACE-Step / WAN2GP</b> require a detected local service. No sample output or simulated completion is shown.</div></div>';
+  const firstGrid = html.indexOf('  <div class="generator-grid"');
+  if (firstGrid >= 0 && !html.includes('nana-operational-audit')) html = html.slice(0, firstGrid) + audit + html.slice(firstGrid);
+  return html;
+}
 const localAssetBase = () => `http://127.0.0.1:${port}`;
 const toolEntry = (name) => {
   if (name === 'hyperframes') return path.join(root, 'node_modules', 'hyperframes', 'bin', 'hyperframes.mjs');
@@ -33,7 +161,7 @@ app.use('/renders', express.static(path.join(root, 'renders')));
 app.use('/openmontage-assets', express.static(path.join(openMontageRoot, 'assets')));
 app.get('/nana-studio-master.html', async (_request, response) => {
   if (!existsSync(nanaStudioSource)) return response.status(404).type('text').send(`NANA Studio source not found: ${nanaStudioSource}`);
-  response.type('html').send(await readFile(nanaStudioSource, 'utf8'));
+  response.type('html').send(prepareNanaStudioHtml(await readFile(nanaStudioSource, 'utf8')));
 });
 app.use(express.static(path.join(root, 'public')));
 
