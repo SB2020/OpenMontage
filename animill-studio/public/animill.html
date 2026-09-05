@@ -101,6 +101,13 @@ button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-vis
 .stageWrap.panel{clip-path:var(--bevel)}
 .stageChrome{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at var(--mx) var(--my),rgba(242,201,104,.10),transparent 22rem),linear-gradient(transparent 70%,rgba(0,0,0,.26));z-index:0}
 .stageHeader{position:absolute;top:9px;left:12px;right:12px;height:34px;display:flex;align-items:center;justify-content:space-between;z-index:5;pointer-events:none}
+.deskRail{position:absolute;left:12px;right:12px;bottom:10px;display:flex;align-items:center;gap:6px;z-index:5;pointer-events:auto;overflow:auto;padding:2px 0}
+.deskRail:before{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(242,201,104,.28),transparent);pointer-events:none}
+.deskLabel{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding:6px 7px;white-space:nowrap}
+.deskLink{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;font-size:9px;letter-spacing:.1em;background:rgba(3,6,8,.64);border-color:rgba(255,255,255,.18);box-shadow:0 6px 18px rgba(0,0,0,.24);clip-path:var(--bevelSm)}
+.deskLink b{font-size:13px;line-height:1;color:var(--gold)}
+.deskLink small{font-size:8px;letter-spacing:.05em;color:var(--mint);text-transform:none}
+.deskLink:hover b{color:var(--mint)}
 .aspectTag,.sceneTag{font-size:9px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;background:rgba(0,0,0,.46);border:1px solid rgba(255,255,255,.16);padding:6px 8px;clip-path:polygon(7px 0,100% 0,calc(100% - 7px) 100%,0 100%)}
 .previewStage{position:absolute;top:50%;left:50%;width:calc(var(--stageW) * 1px);height:calc(var(--stageH) * 1px);transform:translate(-50%,-50%) scale(var(--stageScale));transform-origin:center center;background:#0a0d12;overflow:hidden;box-shadow:0 30px 120px rgba(0,0,0,.6);will-change:transform;z-index:1;backface-visibility:hidden}
 .previewStage[data-bg="gold"]{background:radial-gradient(circle at 50% 12%,rgba(242,201,104,.22),transparent 40%),linear-gradient(160deg,#070502,#140d03 60%,#241804)}
@@ -479,6 +486,12 @@ textarea{min-height:72px;resize:vertical}
       <section class="stageWrap panel" id="stageWrap">
         <div class="stageChrome"></div>
         <div class="stageHeader"><span class="aspectTag" id="aspectTag">9:16 · 1080×1920</span><span class="sceneTag" id="sceneTag">Scene 1 / 3</span></div>
+        <div class="deskRail" id="deskRail" aria-label="Connected desks">
+          <span class="deskLabel">Connected</span>
+          <button class="deskLink" id="deskSource" title="Open source browser"><b>◎</b><span>Research</span><small>source</small></button>
+          <button class="deskLink" id="deskNana" title="Open NANA audio desk"><b>♫</b><span>NANA</span><small>audio</small></button>
+          <button class="deskLink" id="deskCreative" title="Open AI / world / talking-head intake"><b>✦</b><span>World + AI</span><small>intake</small></button>
+        </div>
         <div class="previewStage" id="previewStage"></div>
         <div id="selFrame" aria-hidden="true"><div class="gh se" data-gh="se" title="Drag to resize · Alt-drag to rotate · double-click to reset"></div><div class="rotBadge"></div></div>
       </section>
@@ -2053,7 +2066,7 @@ if($('#toolDeleteBtn'))$('#toolDeleteBtn').onclick=deleteSelected;
 $('#addTextClip').onclick=()=>addBlock('hero');$('#addAudioClip').onclick=()=>addAudio();$('#addEffectClip').onclick=addEffect;
 $('#zoomIn').onclick=()=>{zoomBy(.7);renderTimeline()};$('#zoomOut').onclick=()=>{zoomBy(1.4);renderTimeline()};$('#zoomFit').onclick=()=>{fitView();renderTimeline();toast('Fit to scene')};
 $('#cmdRun').onclick=runCommand;$('#cmdInput').addEventListener('keydown',e=>{if(e.key==='Enter')runCommand()});
-$('#diagBtn').onclick=openDiag;$('#closeDiag').onclick=closeDiag;$('#sourceBrowserBtn').onclick=openSourceBrowser;$('#nanaBtn').onclick=()=>{location.href='/nana.html'};$('#creativeIntakeBtn').onclick=openCreativeIntake;$('#closeCreativeIntake').onclick=closeCreativeIntake;$('#creativeOpenNana').onclick=()=>{location.href='/nana.html'};$('#loadCreativeIntake').onclick=loadCreativeIntake;$('#creativeIntakeFile').onchange=async e=>{let file=e.target.files?.[0];if(file){$('#creativeIntakeJson').value=await file.text();$('#creativeIntakeStatus').textContent=`Ready: ${file.name}`;}};$('#closeSourceBrowser').onclick=closeSourceBrowser;$('#inspectSource').onclick=inspectSourceUrl;$('#sourceUrl').addEventListener('keydown',event=>{if(event.key==='Enter')inspectSourceUrl()});$('#exportBtn').onclick=openExport;$('#closeExport').onclick=closeExport;
+$('#diagBtn').onclick=openDiag;$('#closeDiag').onclick=closeDiag;$('#sourceBrowserBtn').onclick=openSourceBrowser;$('#nanaBtn').onclick=()=>{location.href='/nana.html'};$('#creativeIntakeBtn').onclick=openCreativeIntake;$('#deskSource').onclick=()=>$('#sourceBrowserBtn').click();$('#deskNana').onclick=()=>$('#nanaBtn').click();$('#deskCreative').onclick=()=>$('#creativeIntakeBtn').click();$('#closeCreativeIntake').onclick=closeCreativeIntake;$('#creativeOpenNana').onclick=()=>{location.href='/nana.html'};$('#loadCreativeIntake').onclick=loadCreativeIntake;$('#creativeIntakeFile').onchange=async e=>{let file=e.target.files?.[0];if(file){$('#creativeIntakeJson').value=await file.text();$('#creativeIntakeStatus').textContent=`Ready: ${file.name}`;}};$('#closeSourceBrowser').onclick=closeSourceBrowser;$('#inspectSource').onclick=inspectSourceUrl;$('#sourceUrl').addEventListener('keydown',event=>{if(event.key==='Enter')inspectSourceUrl()});$('#exportBtn').onclick=openExport;$('#closeExport').onclick=closeExport;
 $('#saveBtn').onclick=saveLocal;$('#restoreBtn').onclick=()=>restoreLocal();$('#shareBtn').onclick=share;$('#aspectSelect').onchange=e=>{setAspect(e.target.value);renderAll()};
 $('#downloadProject').onclick=()=>download('animill-project.json','application/json',projectJSON());
 $('#renderHyperframes').onclick=()=>requestServerRender('hyperframes');
