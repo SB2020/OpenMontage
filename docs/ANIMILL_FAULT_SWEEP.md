@@ -25,6 +25,8 @@ Stabilize the existing ANIMILL authoring loop before accepting another feature f
 
 The geometry parity repair is also verified: a fresh representative project completed HyperFrames and Remotion MP4 renders after the tween change, the exporter regression locks authored transform values on motion blocks, and the standalone export contract is checked for authored rotation/scale application.
 
+A fresh custom-geometry fixture (one rotated/scaled shape, no effects) was rendered through both engines. Extracted frames matched in placement, orientation, and visible bounds.
+
 ## Next bounded intake
 
-Use fresh input to audit the remaining high-fan-out contracts: Remotion geometry snapshots plus text-effect parity. Accept a code change only when a reproducible break is found and its cross-surface proof is added.
+Use fresh input to audit the remaining high-fan-out contract: text-effect parity. Accept a code change only when a reproducible break is found and its cross-surface proof is added.
