@@ -437,6 +437,7 @@ textarea{min-height:72px;resize:vertical}
 }
 @media (prefers-reduced-motion:reduce){*{animation-duration:.001s!important;transition-duration:.001s!important}}
 </style>
+<link rel="stylesheet" href="/animill-timeline.css" />
 </head>
 <body>
 <div class="halo"></div><div class="cursor"></div><div id="toast" class="toast"></div>
@@ -484,10 +485,10 @@ textarea{min-height:72px;resize:vertical}
 
       <div class="stageSizer" id="stageSizer" title="Drag to resize stage / timeline"></div>
 
-      <section class="timeline panel" id="timeline">
+      <section class="timeline panel animillTimeline" id="timeline">
         <div class="tlHead">
           <div class="tlReadouts">
-            <span class="chip time">◷ <b id="roTime">0.000s</b></span>
+            <span class="chip time animillReadout">◷ <b id="roTime">0.000s</b></span>
             <span class="chip">DUR <b id="roDur">4.200s</b></span>
             <span class="chip ratio">▦ <b id="roRatio">9:16</b></span>
             <span class="chip">SPAN <b id="roSpan">4.20s</b></span>
@@ -509,10 +510,10 @@ textarea{min-height:72px;resize:vertical}
             <button id="fullTlBtn" class="iconBtn glyphBtn" title="Expand timeline">⤡</button>
           </div>
         </div>
-        <div class="tlRuler" id="ruler"><div class="gutter">Time</div><div class="zoomBand" id="zoomBand"></div></div>
+        <div class="tlRuler animillRuler" id="ruler"><div class="gutter">Time</div><div class="zoomBand" id="zoomBand"></div></div>
         <div class="tlBody" id="tlBody">
           <div id="tracks"></div>
-          <div class="playhead" id="playhead"></div>
+          <div class="playhead animillPlayhead" id="playhead"></div>
         </div>
       </section>
     </main>
@@ -1130,13 +1131,13 @@ function renderTimeline(){
   renderRuler();
   tracksEl.innerHTML='';
   TRACKS.forEach(t=>{
-    let tr=document.createElement('div');tr.className='track';tr.dataset.track=t.key;
-    tr.innerHTML=`<div class="trackLabel"><span class="kindDot ${t.kind}"></span>${t.label}</div><div class="trackLane" data-track="${t.key}"></div>`;
+    let tr=document.createElement('div');tr.className='track animillTrack';tr.dataset.track=t.key;
+    tr.innerHTML=`<div class="trackLabel animillTrackLabel"><span class="kindDot ${t.kind}"></span>${t.label}</div><div class="trackLane animillTrackLane" data-track="${t.key}"></div>`;
     let lane=tr.querySelector('.trackLane');
     if(t.key==='audioA'){let st=currentScene().soundtrack;if(st&&st.peaks&&st.peaks.length){let cv=document.createElement('canvas');cv.className='stWaveLane';let left=xForMs(st.start||0)-LABELW();let w=Math.max(24,(st.dur||1000)*pxPerMs());cv.style.cssText=`position:absolute;left:${left}px;top:5px;height:calc(100% - 10px);width:${w}px;border-radius:5px;background:rgba(118,255,195,.06);box-shadow:inset 0 0 0 1px rgba(118,255,195,.2);pointer-events:none;z-index:0`;lane.appendChild(cv);requestAnimationFrame(()=>drawWave(cv,st.peaks,0));}}
     clipsForTrack(t.key).forEach(c=>{
       let cl=document.createElement('div');
-      cl.className='clip '+(c.kind==='audio'?'audio':c.kind==='fx'?'fx':c.kind==='video'?'video':'')+(activeClipId===c.id?' selected':'');
+      cl.className='clip animillClip '+(c.kind==='audio'?'audio':c.kind==='fx'?'fx':c.kind==='video'?'video':'')+(activeClipId===c.id?' selected':'');
       cl.dataset.id=c.id;cl.dataset.track=t.key;
       let left=xForMs(c.start)-LABELW();// lane origin is at LABELW so subtract
       cl.style.left=left+'px';cl.style.width=Math.max(18,c.dur*pxPerMs())+'px';

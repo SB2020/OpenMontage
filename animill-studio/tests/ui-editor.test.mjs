@@ -181,10 +181,41 @@ test('editor keeps project, inspector, timeline, and viewer state in sync', {tim
   await page.click('#allowRuntimeDifferences');
   assert.equal(await page.$eval('#renderRemotion', (button) => button.disabled), false, 'explicit approval should unlock the selected production route');
 
+  const animillTimelineMetrics = await page.evaluate(() => {
+    const rect = (selector) => document.querySelector(selector).getBoundingClientRect();
+    const style = (selector) => getComputedStyle(document.querySelector(selector));
+    return {
+      sharedStylesheet: [...document.styleSheets].some((sheet) => sheet.href?.endsWith('/animill-timeline.css')),
+      gutterWidth: Math.round(rect('.animillTrackLabel').width),
+      rulerHeight: Math.round(rect('.animillRuler').height),
+      trackHeight: Math.round(rect('.animillTrack').height),
+      clipHeight: Math.round(rect('.animillClip').height),
+      clipPath: style('.animillClip').clipPath,
+      labelFontSize: style('.animillTrackLabel').fontSize,
+      readoutClipPath: style('.animillReadout').clipPath,
+    };
+  });
+  assert.equal(animillTimelineMetrics.sharedStylesheet, true, 'ANIMILL must load the shared timeline primitive');
+
   await page.setViewport({width: 1000, height: 1000});
   await page.goto(`${origin}/nana.html`, {waitUntil: 'networkidle0'});
   assert.match(await page.$eval('.brand', (node) => node.textContent), /NANA STORYWORLDS/);
   assert.equal(await page.$eval('#pointerInfo', (node) => node.getAttribute('aria-hidden')), 'true', 'NANA and ANIMILL must share the reticle information layer');
+  const nanaTimelineMetrics = await page.evaluate(() => {
+    const rect = (selector) => document.querySelector(selector).getBoundingClientRect();
+    const style = (selector) => getComputedStyle(document.querySelector(selector));
+    return {
+      sharedStylesheet: [...document.styleSheets].some((sheet) => sheet.href?.endsWith('/animill-timeline.css')),
+      gutterWidth: Math.round(rect('.animillTrackLabel').width),
+      rulerHeight: Math.round(rect('.animillRuler').height),
+      trackHeight: Math.round(rect('.animillTrack').height),
+      clipHeight: Math.round(rect('.animillClip').height),
+      clipPath: style('.animillClip').clipPath,
+      labelFontSize: style('.animillTrackLabel').fontSize,
+      readoutClipPath: style('.animillReadout').clipPath,
+    };
+  });
+  assert.deepEqual(nanaTimelineMetrics, animillTimelineMetrics, 'Storyworlds must use ANIMILL timeline geometry and chrome');
   const centerWidthBeforeCollapse = await page.$eval('.center', (node) => node.getBoundingClientRect().width);
   await page.click('#toggleStory');
   await new Promise((resolve) => setTimeout(resolve, 300));

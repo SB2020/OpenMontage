@@ -37,6 +37,8 @@ npm start
 
 The transport shares ANIMILL's interaction grammar: remembered toggles for both Story Engine and Launch Rail, play/pause from the current position, stop-to-zero, half-second stepping, loop state, click/drag timeline scrubbing, themed controls, and the shared reticle hover-information layer. Space toggles playback, the arrow keys step, `L` toggles looping, and Home stops.
 
+ANIMILL and NANA load the same `animill-timeline.css` primitive for ruler, gutter, tracks, clips, playhead, and readout chrome. Each app keeps only its domain-specific timeline data and behavior, so Storyworlds inherits ANIMILL's visual system instead of maintaining a copy.
+
 The generated ANIMILL timeline stays inside the currently verified HyperFrames/Remotion compatibility envelope.
 
 ## Provider truth
