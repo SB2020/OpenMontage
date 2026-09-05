@@ -37,8 +37,23 @@ function prepareNanaStudioHtml(source) {
   html = html.replace('      <!-- Output preview -->', '      <!-- Output preview · moved to top by ANIMILL adapter -->');
   html = html.replace('<div id="gen-output-actions" style="display:none;padding:10px 12px;border-top:1px solid var(--border);display:none;gap:6px;flex-wrap:wrap;">', '<div id="gen-output-actions" style="display:none;padding:10px 12px;border-top:1px solid var(--border);gap:6px;flex-wrap:wrap;">');
   html = html.replace(/\s*<div class="tnav-item" onclick="navScrollTo\('tool-(?:music|prompts|project|wangp)'\)">[^<]*<\/div>/g, '');
-  html = html.replace('  window.NANA_TOOLS = NANA_TOOLS;', "  window.NANA_TOOLS = NANA_TOOLS.filter(function (t) { return ['project','music','wangp','prompts'].indexOf(t.id) < 0; });");
-  html = html.replace('  NANA_TOOLS.forEach(function (t) {', '  window.NANA_TOOLS.forEach(function (t) {');
+  const toolsStart = html.indexOf('  const NANA_TOOLS = [');
+  const toolsEnd = html.indexOf('  ];', toolsStart);
+  if (toolsStart >= 0 && toolsEnd > toolsStart) {
+    const body = html.slice(toolsStart, toolsEnd);
+    const starts = [...body.matchAll(/^    \{ id:'([^']+)'/gm)];
+    const removed = new Set(['project', 'music', 'wangp', 'prompts']);
+    if (starts.length) {
+      let rebuilt = body.slice(0, starts[0].index);
+      starts.forEach(function (match, index) {
+        const begin = match.index;
+        const end = index + 1 < starts.length ? starts[index + 1].index : body.length;
+        if (!removed.has(match[1])) rebuilt += body.slice(begin, end);
+      });
+      html = html.slice(0, toolsStart) + rebuilt + html.slice(toolsEnd);
+    }
+  }
+  html = html.replace('  window.NANA_TOOLS = NANA_TOOLS.filter(function (t) { return [\'project\',\'music\',\'wangp\',\'prompts\'].indexOf(t.id) < 0; });', '  window.NANA_TOOLS = NANA_TOOLS;');
   const audFileStart = html.indexOf('function loadAudacityFile(input) {');
   const audOpenStart = html.indexOf('function audOpenTrack(', audFileStart);
   if (audFileStart >= 0 && audOpenStart > audFileStart) {
