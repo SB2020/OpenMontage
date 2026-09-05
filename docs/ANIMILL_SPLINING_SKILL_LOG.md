@@ -116,6 +116,11 @@ and its ANIMILL consumer and proof are recorded.
   state. One pinned source can then ground generators, label derived assets,
   appear in the authoring UI and rights report, survive save/reload, and feed
   every downstream adapter without another scrape.
+- Content factories should be split at their valuable intermediate artifacts.
+  MoneyPrinter's script, search terms, selected media, narration, and word-level
+  timing create more system value as editable ANIMILL inputs than as only a
+  flattened final video. The factory remains replaceable while its outputs gain
+  ANIMILL sources, state, editing, render, and publishing consumers.
 - Audible HyperFrames video must declare `data-has-audio="true"`; otherwise a
   strict renderer correctly rejects the composition.
 - A downstream adapter may derive its own scene plan, but the ANIMILL project
@@ -157,3 +162,6 @@ and its ANIMILL consumer and proof are recorded.
 - `2026-09-05 browser-nerve proof`: `SB2020/browser` source documents became
   durable ANIMILL context with linked media provenance and downstream handoff
   coverage; the complete ANIMILL suite passed 23/23.
+- `2026-09-05 MoneyPrinter adapter proof`: a fresh `script.json`-shaped artifact
+  inherited pinned research and became timed, editable ANIMILL scenes through
+  the visible Creative Intake; full suite 25/25 and focused browser proof passed.

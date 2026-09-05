@@ -10,10 +10,17 @@ unique sources** (105 repositories and 4 external references), all initially
 marked `queued`. The preserved initialization file has SHA-256
 `C30925B46DB0F8260AD91939C4BFF8BBF8DB3CCF6A93A4F9879C453EAB8B423D`.
 
-Current clearance: **1 integrated, 108 queued**. `SB2020/browser` is the first
+Current clearance: **1 integrated, 1 connected, 107 queued**. `SB2020/browser` is the first
 cleared nerve: its source document now persists as canonical ANIMILL context
 and is consumed by generators, assets, rights reporting, save/restore, and
 downstream adapters.
+
+`MoneyPrinterTurbo-Extended` is connected but not terminally cleared. Its real
+`script.json`/task contract now maps script, search terms, media, subtitle
+timing, narration path, parameters, task ID, and inherited research sources
+into editable ANIMILL scenes. Fresh execution of its heavyweight Python/ML/TTS
+runtime remains the clearance gate; installing CUDA, Whisper, Transformers, and
+Chatterbox merely to validate the adapter would be disproportionate.
 
 ## Locked outcome
 

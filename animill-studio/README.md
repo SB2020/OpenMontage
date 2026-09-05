@@ -52,6 +52,11 @@ Browser-only `blob:` asset URLs are rejected because a server renderer cannot re
 
 Claude, WAN2, and other prompt generators should emit the existing `ANIMILL.compose(spec)` schema. Rendering remains a separate decision after the generated timeline has been reviewed. This preserves the prompt tools as planners and ANIMILL as the editable source of truth.
 
+MoneyPrinterTurbo-Extended `script.json` artifacts can be pasted or opened in
+Creative Intake. Script beats, search terms, selected media, subtitle timing,
+narration paths, and inherited source provenance become editable ANIMILL
+scenes; the intake does not trigger generation or flatten the result to video.
+
 ## Existing creative integration spine
 
 The intended path is one connected authoring experience:

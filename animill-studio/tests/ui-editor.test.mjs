@@ -207,6 +207,19 @@ test('editor keeps project, inspector, timeline, and viewer state in sync', {tim
   assert.match(await page.$eval('#projectSources', element => element.textContent), /Fresh research/, 'pinned context must be visible in the ANIMILL asset desk');
   assert.deepEqual(errors, []);
 
+  const moneyPrinterUiProof = await page.evaluate(async () => {
+    const bundle = {task_id: 'mpt-browser-proof', script: 'A grounded hook opens the story. A second beat pays it off.', search_terms: ['grounded hook'], params: {video_subject: 'Integrated content', video_aspect: '16:9'}, animillContext: window.ANIMILL.context()};
+    document.querySelector('#creativeIntakeJson').value = JSON.stringify(bundle);
+    await loadCreativeIntake();
+    const state = window.ANIMILL.getState();
+    return {metadata: state.metadata, sources: state.sources, sceneCount: state.scenes.length, firstBlock: state.scenes[0].blocks[0]};
+  });
+  assert.equal(moneyPrinterUiProof.metadata.source, 'MoneyPrinterTurbo-Extended');
+  assert.equal(moneyPrinterUiProof.sceneCount, 2);
+  assert.equal(moneyPrinterUiProof.sources[0].title, 'Fresh research');
+  assert.deepEqual(moneyPrinterUiProof.firstBlock.sourceIds, [sourceContextProof.sourceId], 'MoneyPrinter output must inherit the research source that grounded it');
+  assert.deepEqual(errors, []);
+
   await page.evaluate(() => window.ANIMILL.loadState({
     id: 'text-edit', name: 'Text edit', aspect: 'desktop_16_9', fps: 30, activeScene: 0, assets: [],
     scenes: [{id: 'scene-1', name: 'One', duration: 2000, audio: [], effects: [], blocks: [

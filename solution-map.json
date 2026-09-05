@@ -201,6 +201,18 @@
       "evidence": ["animill-studio npm test passes 23/23", "Fresh browser proof preserves pinned source context and linked block source ID through save/restore", "Bridge contract emits source documents and source-linked media"]
     },
     {
+      "id": "moneyprinter-content-nerve",
+      "outcome": "MoneyPrinterTurbo-Extended intermediate artifacts become editable, source-grounded ANIMILL material instead of only a flattened final video.",
+      "inputs": ["MoneyPrinter script.json-shaped data", "optional SRT timing, media, narration path, task ID, and ANIMILL source context"],
+      "outputs": ["ANIMILL compose spec with timed scenes, text/media blocks, soundtrack, generator metadata, and inherited source IDs"],
+      "depends_on": ["source-context-spine", "creative-surface-integration"],
+      "interface_contract": ["The adapter does not call a provider.", "Script/search/media/timing/task provenance survives conversion.", "Existing ANIMILL sources ground derived blocks.", "ANIMILL remains canonical after intake."],
+      "acceptance": ["Fresh script.json-shaped input crosses the visible Creative Intake and becomes editable scenes.", "SRT timing remains exact.", "A fresh upstream MoneyPrinter task produces an artifact accepted by the same adapter."],
+      "fallback": ["Accept script-only artifacts with deterministic estimated timing while explicitly reporting that the upstream generation runtime is unproven."],
+      "status": "in_progress",
+      "evidence": ["Cloned upstream commit c6ba9d31818a73501aadab899029c24a5b592e57 and mapped its actual VideoParams/script.json/task stages", "Adapter and SRT contract tests pass", "Focused browser proof shows inherited research and editable scene output", "Full ANIMILL suite passes 25/25", "Upstream Python/ML/TTS runtime has not yet been freshly executed"]
+    },
+    {
       "id": "representative-proof",
       "outcome": "A realistic multi-scene project proves the whole workflow under normal use and failure cases.",
       "inputs": ["fresh multi-scene text, image, audio, and effect project"],
@@ -230,5 +242,5 @@
     "Pointer feedback can regress into full-viewport repaint or layout translation if shared chrome adds animated background or transform rules.",
     "One-hour authoring behavior is verified, but a full one-hour MP4 performance render is not yet benchmarked."
   ],
-  "next_unlocked_capability": "Use the verified source-context spine to clear a content-generation nerve such as MoneyPrinterTurbo-Extended: prove its existing output, map its research/script/media artifacts into ANIMILL.compose without a parallel project model, and preserve source IDs into editing and delivery."
+  "next_unlocked_capability": "Finish MoneyPrinterTurbo-Extended clearance with the cheapest representative upstream task that emits its real intermediate artifacts, then route the same source-grounded ANIMILL project into the existing audio and delivery nerves without adding another shell."
 }

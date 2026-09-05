@@ -100,3 +100,10 @@ The existing `ANIMILL.compose(spec)` interface remains the
 prompt-generator/Claude/Wan entry point. Compose specs may carry `sources`, and
 generated assets or blocks should retain their `sourceId` so decisions remain
 traceable.
+
+Creative Intake also recognizes a MoneyPrinterTurbo-Extended `script.json`
+shape. The adapter preserves its subject, script, search terms, aspect,
+materials, SRT timing, narration path, parameters, task ID, and any incoming
+ANIMILL source context. It creates editable scenes and blocks rather than
+importing only the flattened final MP4. No generator or provider is called by
+the intake step.
