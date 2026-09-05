@@ -214,8 +214,8 @@ test('editor keeps project, inspector, timeline, and viewer state in sync', {tim
   await new Promise((resolve) => setTimeout(resolve, 300));
   await page.select('#themeSelect', 'mint');
   assert.equal(await page.$eval('body', (node) => node.dataset.theme), 'mint');
-  const timelineBox = await page.$eval('#timeline', (node) => { const rect = node.getBoundingClientRect(); return {left: rect.left, top: rect.top, width: rect.width}; });
-  await page.mouse.click(timelineBox.left + 82 + (timelineBox.width - 82) * 0.5, timelineBox.top + 10);
+  const timelineBox = await page.$eval('#timeline', (node) => { const rect = node.getBoundingClientRect(); const gutter = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--labelW')); return {left: rect.left, top: rect.top, width: rect.width, gutter}; });
+  await page.mouse.click(timelineBox.left + timelineBox.gutter + (timelineBox.width - timelineBox.gutter) * 0.5, timelineBox.top + 10);
   assert.match(await page.$eval('#clock', (node) => node.textContent), /^9\.0 \/ 18\.0s$/, 'timeline click must scrub the NANA playhead');
   await page.click('#step');
   assert.match(await page.$eval('#clock', (node) => node.textContent), /^9\.5 \/ 18\.0s$/, 'transport step must advance from the scrubbed time');
