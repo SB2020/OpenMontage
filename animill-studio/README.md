@@ -1,6 +1,6 @@
-# ANIMILL 7 - OpenMontage authoring studio
+# ANIMILL 7 - composable creative authoring studio
 
-ANIMILL is the browser-first visual authoring frontend inside OpenMontage. It adds provenance-aware source inspection and two explicit, non-silent production runtimes:
+ANIMILL is the browser-first authoring and interaction center for the specialized creative tools collected under E-drives. OpenMontage is one connected production fragment, not the product shell. ANIMILL adds provenance-aware source inspection and two explicit, non-silent production runtimes:
 
 - **HyperFrames** for deterministic HTML/CSS/GSAP rendering that closely follows ANIMILL's native authoring model.
 - **Remotion** for React-driven compositions, reusable programmatic templates, and server/cloud render paths.
@@ -56,14 +56,14 @@ Claude, WAN2, and other prompt generators should emit the existing `ANIMILL.comp
 
 The intended path is one connected authoring experience:
 
-`AI / prompt input → world or talking-head composition → NANA audio plan → ANIMILL authoring → OpenMontage render`
+`E-drives niche fragments → ANIMILL standards and shared state → fused creative system → optional output adapters`
 
 Existing world, talking-head, avatar, prompt, and audio work is part of this
 path. The integration task is to bring those artifacts through the ANIMILL
 shell while preserving scene IDs, timing, media references, voice metadata,
 authored geometry, and provenance. NANA remains the audio planning and local
 audition desk; ANIMILL remains the visual source of truth; OpenMontage remains
-the governed production handoff.
+an available governed production handoff alongside other adapters.
 
 See [`docs/CREATIVE_INTEGRATION_SPINE.md`](../docs/CREATIVE_INTEGRATION_SPINE.md)
 for the locked UI and handoff contract. No new generation provider or parallel

@@ -17,7 +17,8 @@
   "constraints": [
     "Preserve the existing ANIMILL workflow and user-created work.",
     "Keep HyperFrames and Remotion explicit; never silently substitute one for the other.",
-    "Continue to support browser-local authoring and offline local rendering."
+    "Continue to support browser-local authoring and offline local rendering.",
+    "Treat OpenMontage and every imported repository as a capability fragment; ANIMILL standards and canonical state remain the integration center."
   ],
   "assumptions": [
     "The timeline is the source of truth for block visibility at the playhead.",
@@ -178,9 +179,9 @@
       "id": "creative-surface-integration",
       "outcome": "Existing AI, world, talking-head, and audio work enters one standardized ANIMILL authoring spine without creating a parallel generator workflow.",
       "inputs": ["ANIMILL.compose(spec) from Claude/WAN2/prompt generators", "existing world or talking-head media and metadata", "normalized NANA audio project"],
-      "outputs": ["one reviewable ANIMILL project with preserved scene, media, timing, voice, and provenance metadata", "explicit OpenMontage handoff"],
+      "outputs": ["one reviewable ANIMILL project with preserved scene, media, timing, voice, and provenance metadata", "explicit adapters for downstream fragments, with OpenMontage as the first proven example"],
       "depends_on": ["worlds-ui-standardization", "animill-viewer-timeline-audit", "runtime-parity"],
-      "interface_contract": ["ANIMILL remains the visual authoring source of truth.", "NANA remains the audio planning and local audition desk.", "UI standardization cannot drop IDs, timing, media references, authored geometry, voice metadata, or provenance.", "Existing talking-head and AI artifacts are wired into the current compose/import path; no new provider or generation surface is required."],
+      "interface_contract": ["ANIMILL standards and canonical state remain the authoring center.", "NANA remains the audio planning and local audition desk.", "OpenMontage remains an optional downstream fragment rather than owning the product architecture.", "UI standardization cannot drop IDs, timing, media references, authored geometry, voice metadata, or provenance.", "Existing talking-head and AI artifacts are wired into the current compose/import path; no new provider or generation surface is required."],
       "acceptance": ["docs/CREATIVE_INTEGRATION_SPINE.md is the visible map.", "One existing AI or talking-head fixture enters the current ANIMILL shell and its audio/world metadata remains visible in the inspector and timeline.", "The same fixture can be handed to OpenMontage without a second project model."],
       "fallback": ["Keep the existing artifact path and mark any unmapped field visibly pending; do not replace it with a new generator."],
       "status": "verified",

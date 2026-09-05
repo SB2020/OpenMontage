@@ -1,15 +1,15 @@
 {
   "schema_version": 2,
-  "goal": "Build a local-first audio microdrama authoring product that turns narrative intent into a provider-ready beat plan, an OpenMontage production package, and an editable ANIMILL visual launch timeline.",
+  "goal": "Build a local-first audio microdrama capability that turns narrative intent into a provider-ready beat plan and an editable ANIMILL visual launch timeline, with optional downstream adapters.",
   "definition_of_done": [
     "A creator can choose an archetype and edit voice, music, ambience, SFX, silence, and transition beats without using a provider.",
     "Local preview makes timing and energy understandable without being misrepresented as a finished master.",
-    "The same canonical project produces OpenMontage artifacts and a production-safe ANIMILL handoff.",
+    "The same canonical project produces a production-safe ANIMILL handoff and can feed optional downstream adapters such as OpenMontage.",
     "Unavailable providers remain visibly locked and are never silently substituted.",
     "A fresh browser test proves NANA to ANIMILL continuity."
   ],
   "non_goals": ["Streaming catalog", "Social graph", "Royalty accounting", "Autonomous publishing", "Unconsented voice cloning"],
-  "constraints": ["Local-first authoring must work with no API keys", "Provider choice and cost must remain explicit", "ANIMILL is the visual authoring consumer", "OpenMontage owns production governance"],
+  "constraints": ["Local-first authoring must work with no API keys", "Provider choice and cost must remain explicit", "ANIMILL standards and canonical state are the integration center", "OpenMontage is one optional production adapter"],
   "assumptions": ["Audio microdrama plus visual launch kit is the first wedge", "Browser speech and Web Audio are preview-only", "FFmpeg remains the first deterministic mix engine"],
   "unknowns": ["Which configured generation provider the creator will approve first", "Whether the first release target is a dialogue microdrama or song campaign", "Required stem-editing depth after the first generated master"],
   "problem_formulations": [
@@ -18,7 +18,7 @@
     {"id": "backward", "question": "What must ANIMILL and OpenMontage receive for the audio plan to remain useful downstream?", "operator": "outcome-backward", "exposes": ["stable schemas", "timing continuity"], "hides": ["first-input ergonomics"], "assumptions": ["shared millisecond timeline"]}
   ],
   "solution_vectors": [{"id": "local-first-story-spine", "from_formulations": ["forward", "inverse", "backward"], "path": ["beat-authoring", "timeline-direct-edit", "local-voice-roster", "local-preview", "provider-truth", "openmontage-handoff", "animill-handoff", "generation-connection", "mix-proof"], "decisive_evidence": ["Fresh creator input reaches ANIMILL and OpenMontage from one canonical audio project."], "cost_risk": ["Real generation remains blocked until a provider is configured and approved."]}],
-  "solution_equation": "NANA = narrative promise + timed beat grid + honest local preview + provider/provenance contract + OpenMontage package + ANIMILL launch kit + verified master",
+  "solution_equation": "NANA = narrative promise + timed beat grid + honest local preview + provider/provenance contract + ANIMILL launch kit + optional adapters + verified master",
   "modules": [
     {"id": "beat-authoring", "outcome": "Creator can structure and edit the full audio event vocabulary.", "inputs": ["archetype, promise, audience, duration"], "outputs": ["normalized NANA project"], "depends_on": [], "interface_contract": ["All timing is bounded to project duration", "Every beat has lane, intent, energy, provider, rights, and approval fields"], "acceptance": ["Unit test normalizes a fresh archetype into six ordered lanes"], "fallback": ["Start with an empty voice beat"], "status": "verified", "evidence": ["tests/audio-project.test.mjs"]},
     {"id": "timeline-direct-edit", "outcome": "Every NANA timeline item directly edits its canonical beat.", "inputs": ["clip body or left/right edge pointer drag"], "outputs": ["bounded start, duration, and optional lane change reflected in both timeline and beat editor"], "depends_on": ["beat-authoring"], "interface_contract": ["Clip body moves timing", "Clip edges resize timing", "Double-click focuses the beat text", "All changes remain within the project duration"], "acceptance": ["Fresh browser test drags and resizes a real voice clip and observes changed beat fields"], "fallback": ["Numeric beat fields remain available below the timeline"], "status": "verified", "evidence": ["animill-studio/tests/ui-editor.test.mjs direct timeline-edit assertions pass"]},
