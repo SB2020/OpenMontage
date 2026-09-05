@@ -5,6 +5,7 @@ import net from 'node:net';
 
 const MAX_HTML_BYTES = 3 * 1024 * 1024;
 const FETCH_TIMEOUT_MS = 20_000;
+const MAX_TEXT_CHARS = 12_000;
 
 function isPrivateIp(address) {
   const normalized = String(address || '').toLowerCase().replace(/^::ffff:/, '');
@@ -72,10 +73,39 @@ function metaMap(html) {
   return map;
 }
 
+export function sourceDocumentId(value) {
+  let hash = 2166136261;
+  for (const char of String(value || '')) {
+    hash ^= char.charCodeAt(0);
+    hash = Math.imul(hash, 16777619);
+  }
+  return `source-${(hash >>> 0).toString(36)}`;
+}
+
+function contentMap(html) {
+  const withoutNoise = html
+    .replace(/<(script|style|noscript|template|svg)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ')
+    .replace(/<(br|hr)\b[^>]*>|<\/(p|div|section|article|main|header|footer|li|h[1-6])>/gi, '\n');
+  const text = decodeEntities(withoutNoise.replace(/<[^>]+>/g, ' '))
+    .replace(/[ \t]+/g, ' ')
+    .replace(/\s*\n\s*/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+    .slice(0, MAX_TEXT_CHARS);
+  const headings = [...html.matchAll(/<h([1-3])\b[^>]*>([\s\S]*?)<\/h\1>/gi)]
+    .map(match => decodeEntities(match[2].replace(/<[^>]+>/g, ' ')))
+    .filter(Boolean)
+    .slice(0, 30);
+  return {text, headings};
+}
+
 export function extractSourceDocument(html, sourceUrl, runtime = 'http') {
   const meta = metaMap(html);
+  const content = contentMap(html);
   const titleMatch = html.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i);
   const canonicalTag = html.match(/<link\b[^>]*rel\s*=\s*["']?canonical["']?[^>]*>/i)?.[0] || '';
+  const htmlTag = html.match(/<html\b[^>]*>/i)?.[0] || '';
+  const canonicalUrl = absoluteUrl(attr(canonicalTag, 'href'), sourceUrl) || sourceUrl;
   const candidates = [];
   const seen = new Set();
   const add = (type, value, label = '') => {
@@ -100,11 +130,18 @@ export function extractSourceDocument(html, sourceUrl, runtime = 'http') {
   }
 
   return {
+    id: sourceDocumentId(canonicalUrl),
     url: sourceUrl,
-    canonicalUrl: absoluteUrl(attr(canonicalTag, 'href'), sourceUrl) || sourceUrl,
+    canonicalUrl,
     title: decodeEntities(meta.get('og:title') || meta.get('twitter:title') || titleMatch?.[1] || new URL(sourceUrl).hostname),
     description: decodeEntities(meta.get('og:description') || meta.get('description') || ''),
     siteName: decodeEntities(meta.get('og:site_name') || new URL(sourceUrl).hostname),
+    language: attr(htmlTag, 'lang') || null,
+    keywords: decodeEntities(meta.get('keywords') || '').split(',').map(value => value.trim()).filter(Boolean).slice(0, 30),
+    headings: content.headings,
+    textExcerpt: content.text,
+    rights: 'unknown',
+    commercial: false,
     runtime,
     inspectedAt: new Date().toISOString(),
     candidates: candidates.slice(0, 60),

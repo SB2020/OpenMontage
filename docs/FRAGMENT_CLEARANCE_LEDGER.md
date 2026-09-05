@@ -10,6 +10,11 @@ unique sources** (105 repositories and 4 external references), all initially
 marked `queued`. The preserved initialization file has SHA-256
 `C30925B46DB0F8260AD91939C4BFF8BBF8DB3CCF6A93A4F9879C453EAB8B423D`.
 
+Current clearance: **1 integrated, 108 queued**. `SB2020/browser` is the first
+cleared nerve: its source document now persists as canonical ANIMILL context
+and is consumed by generators, assets, rights reporting, save/restore, and
+downstream adapters.
+
 ## Locked outcome
 
 Clear every listed source by integrating or absorbing its distinct value into

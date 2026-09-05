@@ -5,7 +5,8 @@ import {toOpenMontageArtifacts} from '../src/openmontage-bridge.mjs';
 
 const project = {
   id: 'fresh-proof', name: 'Fresh Bridge Proof', aspect: 'desktop_16_9', fps: 24,
-  assets: [{id: 'source-1', name: 'Reference', type: 'image', url: 'https://example.com/cover.jpg', rights: 'unknown'}],
+  sources: [{id: 'source-page', url: 'https://example.com/page', canonicalUrl: 'https://example.com/page', title: 'Proof research', description: 'Grounded input', siteName: 'Example', language: 'en', keywords: ['proof'], headings: ['Evidence'], textExcerpt: 'Fresh attributable source text.', rights: 'unknown', commercial: false, runtime: 'proof', inspectedAt: '2026-09-05T00:00:00.000Z', candidates: [{type: 'image', url: 'https://example.com/cover.jpg', label: 'Cover'}]}],
+  assets: [{id: 'source-1', name: 'Reference', type: 'image', url: 'https://example.com/cover.jpg', sourceId: 'source-page', sourceUrl: 'https://example.com/page', rights: 'unknown'}],
   scenes: [{id: 'scene-1', name: 'Hook', duration: 1000, audio: [], effects: [], blocks: [
     {id: 'hero-1', type: 'hero', content: 'A NEW HOOK', start: 0, dur: 1000, motion: 'scale-in'},
     {id: 'image-1', type: 'image', content: 'Cover', src: 'https://example.com/cover.jpg', start: 0, dur: 1000},
@@ -13,9 +14,15 @@ const project = {
 };
 
 test('source browser extracts provenance-ready media', () => {
-  const result = extractSourceDocument('<title>Proof</title><meta property="og:description" content="Fresh"><img src="/cover.jpg" alt="Cover">', 'https://example.com/page', 'proof');
+  const result = extractSourceDocument('<html lang="en"><title>Proof</title><meta property="og:description" content="Fresh"><meta name="keywords" content="motion, evidence"><h1>Evidence first</h1><p>Ground the creative decision.</p><img src="/cover.jpg" alt="Cover"></html>', 'https://example.com/page', 'proof');
+  assert.match(result.id, /^source-/);
   assert.equal(result.title, 'Proof');
   assert.equal(result.description, 'Fresh');
+  assert.equal(result.language, 'en');
+  assert.deepEqual(result.keywords, ['motion', 'evidence']);
+  assert.deepEqual(result.headings, ['Evidence first']);
+  assert.match(result.textExcerpt, /Ground the creative decision/);
+  assert.equal(result.rights, 'unknown');
   assert.deepEqual(result.candidates[0], {type: 'image', url: 'https://example.com/cover.jpg', label: 'Cover'});
 });
 
@@ -25,6 +32,9 @@ test('ANIMILL maps to valid OpenMontage artifact contracts', () => {
   assert.equal(result.scenePlan.scenes[0].type, 'generated');
   assert.equal(result.editDecisions.render_runtime, 'hyperframes');
   assert.equal(result.editDecisions.cuts[0].source, 'artifacts/animill-project.json#scene-1');
+  assert.equal(result.scenePlan.metadata.creative_context.scenes[0].sources[0].id, 'source-page');
+  assert.equal(result.sourceManifest.documents[0].text_excerpt, 'Fresh attributable source text.');
+  assert.equal(result.sourceManifest.sources[0].source_id, 'source-page');
   assert.equal(result.sourceManifest.sources[0].rights, 'unknown');
 });
 

@@ -23,6 +23,13 @@ function creativeContext(project, scene) {
     kind: project.metadata?.kind || null,
     world: scene.world || project.world || null,
     talking_head: talkingHead,
+    sources: (project.sources || []).map(source => ({
+      id: source.id || null,
+      title: source.title || null,
+      url: source.canonicalUrl || source.url || null,
+      rights: source.rights || 'unknown',
+      commercial: Boolean(source.commercial),
+    })),
     audio: (scene.audio || []).map(cue => ({
       id: cue.id || null,
       label: cue.label || null,
@@ -38,17 +45,37 @@ function creativeContext(project, scene) {
 }
 
 function sourceManifestSources(project) {
-  const sources = (project.assets || []).map(asset => ({id: asset.id, name: asset.name, type: asset.type, url: asset.url || null, source_url: asset.sourceUrl || null, rights: asset.rights || 'unknown', commercial: Boolean(asset.commercial)}));
+  const sources = (project.assets || []).map(asset => ({id: asset.id, name: asset.name, type: asset.type, url: asset.url || null, source_id: asset.sourceId || null, source_url: asset.sourceUrl || null, rights: asset.rights || 'unknown', commercial: Boolean(asset.commercial)}));
   const seen = new Set(sources.flatMap(source => [source.id, source.url].filter(Boolean)));
   for (const scene of project.scenes) {
     for (const block of scene.blocks || []) {
       if (!['image', 'video'].includes(block.type) || !block.src || seen.has(block.id) || seen.has(block.src)) continue;
-      sources.push({id: block.id, name: block.content || block.type, type: block.type, url: block.src, source_url: block.sourceUrl || null, rights: block.rights || 'unknown', commercial: Boolean(block.commercial), scene_id: scene.id});
+      sources.push({id: block.id, name: block.content || block.type, type: block.type, url: block.src, source_id: block.sourceId || null, source_url: block.sourceUrl || null, rights: block.rights || 'unknown', commercial: Boolean(block.commercial), scene_id: scene.id});
       seen.add(block.id);
       seen.add(block.src);
     }
   }
   return sources;
+}
+
+function sourceManifestDocuments(project) {
+  return (project.sources || []).map(source => ({
+    id: source.id,
+    url: source.url || source.canonicalUrl,
+    canonical_url: source.canonicalUrl || source.url,
+    title: source.title || null,
+    description: source.description || null,
+    site_name: source.siteName || null,
+    language: source.language || null,
+    keywords: source.keywords || [],
+    headings: source.headings || [],
+    text_excerpt: source.textExcerpt || '',
+    rights: source.rights || 'unknown',
+    commercial: Boolean(source.commercial),
+    runtime: source.runtime || 'imported',
+    inspected_at: source.inspectedAt || null,
+    candidate_count: (source.candidates || []).length,
+  }));
 }
 
 function sceneDescription(scene) {
@@ -108,6 +135,7 @@ export function toOpenMontageArtifacts(rawProject, renderRuntime = 'hyperframes'
     animillProject: project,
     sourceManifest: {
       version: '1.0',
+      documents: sourceManifestDocuments(project),
       sources: sourceManifestSources(project),
     },
   };

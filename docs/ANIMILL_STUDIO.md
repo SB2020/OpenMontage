@@ -1,22 +1,32 @@
 # ANIMILL Studio
 
-ANIMILL is the visual authoring frontend for OpenMontage. It gives a human or an agent a direct canvas, scene list, timeline, typography system, motion vocabulary, sound cues, asset library, and two explicit production render routes.
+ANIMILL is the shared visual authoring and interaction center for the creative
+capabilities collected under E-drives. It gives a human or an agent a direct
+canvas, scene list, timeline, typography system, motion vocabulary, sound cues,
+asset library, attributable research context, and explicit production routes.
+OpenMontage is one downstream production adapter, not ANIMILL's owner or shell.
 
 ## Boundary contract
 
 ```text
-Lightpanda source browser -> provenance-aware reference assets
+Browser/acquisition nerves -> pinned source context + attributable assets
                                       |
                                       v
-ANIMILL canvas + timeline -> OpenMontage canonical artifacts
-                                      |
-                         +------------+------------+
-                         |                         |
-                    HyperFrames                 Remotion
+                         ANIMILL canonical project
+                         /         |          \
+              generators     authoring UI     output adapters
+                                              /      |      \
+                                      HyperFrames Remotion OpenMontage
 ```
 
-- **ANIMILL owns authoring:** layout, timing, motion, scenes, selected media and preview.
-- **OpenMontage owns production governance:** pipeline state, canonical artifacts, provider choices, approval gates, budget and delivery review.
+- **ANIMILL owns shared creative state:** sources, assets, worlds, scenes, layout,
+  timing, motion, selected media, audio intent, and preview.
+- **Specialized fragments own their niche logic:** generators, audio desks,
+  browsers, renderers, and publishers connect through explicit ports without
+  introducing parallel project models.
+- **OpenMontage owns its production-governance adapter:** pipeline state,
+  canonical artifacts, provider choices, approval gates, budget, and delivery
+  review when that path is selected.
 - **Lightpanda owns browser automation:** scripted public-web inspection when its runtime is installed. The built-in HTTP inspector is deliberately limited to single-page metadata.
 - **HyperFrames and Remotion remain separate:** selecting one never silently invokes the other.
 
@@ -48,9 +58,17 @@ Choose **Source browser**, enter a public `http://` or `https://` page and selec
 
 - **Best available:** uses Lightpanda when present, otherwise the bounded HTTP metadata inspector.
 - **Require Lightpanda:** fails visibly if Lightpanda is unavailable.
-- **Metadata only:** fetches one public page and extracts title, description and directly exposed image/video/audio URLs.
+- **Metadata only:** fetches one public page and extracts title, description,
+  language, keywords, headings, a bounded text excerpt, and directly exposed
+  image/video/audio URLs.
 
-Local, private-network and credential-bearing URLs are blocked. Responses are capped at 3 MB and time out. Imported web media is marked `rights: unknown`, `commercial: false`, and `zone: reference` until a human clears it.
+Local, private-network and credential-bearing URLs are blocked. Responses are
+capped at 3 MB and time out. Choose **Pin source to project** to make the page
+context part of canonical ANIMILL state. Pinned context survives save/restore,
+is available to prompt generators through `ANIMILL.context()`, appears in the
+asset desk and license report, and follows downstream handoffs. Imported web
+media retains its source ID and is marked `rights: unknown`, `commercial:
+false`, and `zone: reference` until a human clears it.
 
 The browser is based on the interface exposed by [`SB2020/browser`](https://github.com/SB2020/browser), the Lightpanda fork. On Windows, install Lightpanda in WSL or Docker, or set `LIGHTPANDA_BIN` to a runnable binary.
 
@@ -71,10 +89,14 @@ projects/<project-slug>/artifacts/
 ## Agent interface
 
 ```js
-await ANIMILL.inspectSource(url, 'auto');
+const source = await ANIMILL.inspectSource(url, 'auto', {pin: true});
+const grounding = ANIMILL.context();
 const match = await ANIMILL.checkCompatibility();
 await ANIMILL.exportToOpenMontage('hyperframes', {allowDifferences: !match.hyperframes.exact});
 await ANIMILL.renderWith('remotion', {allowDifferences: !match.remotion.exact});
 ```
 
-The existing `ANIMILL.compose(spec)` interface remains the prompt-generator/Claude/Wan entry point.
+The existing `ANIMILL.compose(spec)` interface remains the
+prompt-generator/Claude/Wan entry point. Compose specs may carry `sources`, and
+generated assets or blocks should retain their `sourceId` so decisions remain
+traceable.

@@ -112,6 +112,10 @@ and its ANIMILL consumer and proof are recorded.
   block instead of introducing a second scene model.
 - Repository-local media needs two paths: browser serving for authoring and
   job-local materialization for deterministic renderers.
+- Acquired research must become canonical project context, not ephemeral modal
+  state. One pinned source can then ground generators, label derived assets,
+  appear in the authoring UI and rights report, survive save/reload, and feed
+  every downstream adapter without another scrape.
 - Audible HyperFrames video must declare `data-has-audio="true"`; otherwise a
   strict renderer correctly rejects the composition.
 - A downstream adapter may derive its own scene plan, but the ANIMILL project
@@ -150,3 +154,6 @@ and its ANIMILL consumer and proof are recorded.
 - `5b83dd6`: talking-head intent became an editable full-frame media block.
 - `b22eb1e`: repository-local media completed HyperFrames and Remotion renders
   with AAC audio; downstream context preservation was verified.
+- `2026-09-05 browser-nerve proof`: `SB2020/browser` source documents became
+  durable ANIMILL context with linked media provenance and downstream handoff
+  coverage; the complete ANIMILL suite passed 23/23.

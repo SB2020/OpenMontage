@@ -189,6 +189,24 @@ test('editor keeps project, inspector, timeline, and viewer state in sync', {tim
   assert.equal(composeProof.sceneAfterBadNavigation, composeProof.beforeScene, 'invalid automation navigation must keep the current scene stable');
   assert.deepEqual(errors, []);
 
+  const sourceContextProof = await page.evaluate(() => {
+    window.ANIMILL.loadState({id: 'source-proof', name: 'Source proof', aspect: 'desktop_16_9', fps: 30, activeScene: 0, assets: [], sources: [], scenes: [{id: 'scene-source', name: 'Grounded scene', duration: 2000, audio: [], effects: [], blocks: []}]});
+    const sourceId = window.ANIMILL.pinSource({url: 'https://example.com/article', canonicalUrl: 'https://example.com/article', title: 'Fresh research', description: 'A source that grounds later generation.', siteName: 'Example', language: 'en', keywords: ['grounding'], headings: ['Fresh heading'], textExcerpt: 'Fresh attributable source text.', rights: 'unknown', commercial: false, runtime: 'proof', inspectedAt: '2026-09-05T00:00:00.000Z', candidates: []});
+    const blockId = window.ANIMILL.addBlock('image', 'Grounded still', {src: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==', sourceId, sourceUrl: 'https://example.com/article', rights: 'unknown', commercial: false, start: 0, dur: 1000});
+    const state = window.ANIMILL.getState();
+    return {sourceId, source: window.ANIMILL.sources()[0], context: window.ANIMILL.context(), block: state.scenes[0].blocks.find(block => block.id === blockId)};
+  });
+  assert.equal(sourceContextProof.source.id, sourceContextProof.sourceId);
+  assert.equal(sourceContextProof.context.sources[0].textExcerpt, 'Fresh attributable source text.');
+  assert.equal(sourceContextProof.block.sourceId, sourceContextProof.sourceId, 'generated or imported blocks must retain their grounding source ID');
+  await page.evaluate(() => document.querySelector('#saveBtn').click());
+  await page.evaluate(() => window.ANIMILL.loadState({id: 'temporary', name: 'Temporary', aspect: 'desktop_16_9', scenes: [{id: 'temporary-scene', name: 'Temporary', duration: 1000, blocks: []}]}));
+  await page.evaluate(() => document.querySelector('#restoreBtn').click());
+  assert.equal(await page.evaluate(() => window.ANIMILL.sources()[0].title), 'Fresh research', 'pinned research must survive the canonical browser save and restore');
+  await page.evaluate(() => document.querySelector('#toolTabs [data-tab="Assets"]').click());
+  assert.match(await page.$eval('#projectSources', element => element.textContent), /Fresh research/, 'pinned context must be visible in the ANIMILL asset desk');
+  assert.deepEqual(errors, []);
+
   await page.evaluate(() => window.ANIMILL.loadState({
     id: 'text-edit', name: 'Text edit', aspect: 'desktop_16_9', fps: 30, activeScene: 0, assets: [],
     scenes: [{id: 'scene-1', name: 'One', duration: 2000, audio: [], effects: [], blocks: [
