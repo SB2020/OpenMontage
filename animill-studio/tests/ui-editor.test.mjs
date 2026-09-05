@@ -65,6 +65,7 @@ test('editor keeps project, inspector, timeline, and viewer state in sync', {tim
   assert.equal(animillChromeProof.hoverKind, 'action');
   assert.equal(animillChromeProof.hot, true);
   assert.match(animillChromeProof.light, /radial-gradient/);
+  assert.match(animillChromeProof.light, /384px/, 'the shared pointer light must keep ANIMILL’s 24rem falloff');
 
   const result = await page.evaluate(() => {
     const initial = {
@@ -234,7 +235,9 @@ test('editor keeps project, inspector, timeline, and viewer state in sync', {tim
   await page.goto(`${origin}/nana.html`, {waitUntil: 'networkidle0'});
   assert.match(await page.$eval('.brand', (node) => node.textContent), /NANA STORYWORLDS/);
   assert.equal(await page.$eval('#pointerInfo', (node) => node.getAttribute('aria-hidden')), 'true', 'NANA and ANIMILL must share the reticle information layer');
-  assert.equal(await page.$eval('.pointerLight', (node) => getComputedStyle(node).backgroundImage), animillChromeProof.light, 'NANA must share ANIMILL’s moving pointer light');
+  const nanaLight = await page.$eval('.pointerLight', (node) => getComputedStyle(node).backgroundImage);
+  const normalizePointerLight = (value) => value.replace(/circle at [^,]+,/, 'circle at POINTER,');
+  assert.equal(normalizePointerLight(nanaLight), normalizePointerLight(animillChromeProof.light), 'NANA must share ANIMILL’s moving pointer light');
   assert.equal(await page.$$eval('.voicePick select', (selects) => selects.length > 0 && selects.every((select) => select.options.length === 3)), true, 'every device voice plus the system default must be available per voice beat');
   await page.select('.voicePick select', 'voice-two');
   await page.click('#save');

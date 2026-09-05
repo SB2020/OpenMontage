@@ -21,7 +21,7 @@
   let css=`
     :root{--mx:50vw;--my:50vh;--soft:cubic-bezier(.2,.8,.2,1)}
     body.animillReticle{cursor:none}
-    body.animillReticle .pointerLight{position:fixed;left:0;top:0;width:520px;height:520px;margin:-260px 0 0 -260px;z-index:0;pointer-events:none;transform:translate3d(var(--mx),var(--my),0);background:radial-gradient(circle, color-mix(in srgb,var(--gold) 15%,transparent) 0, color-mix(in srgb,var(--mint) 7%,transparent) 28%,transparent 70%);opacity:.78;transition:opacity .18s var(--soft);will-change:transform}
+    body.animillReticle .pointerLight{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(circle at var(--mx) var(--my),color-mix(in srgb,var(--gold) 20%,transparent),transparent 24rem);opacity:1;transition:opacity .18s var(--soft);will-change:background}
     body.animillReticle.hot .pointerLight{opacity:1}
     body.animillReticle .cursor,body.animillReticle .halo{position:fixed;left:0;top:0;pointer-events:none;z-index:100001;transform:translate3d(var(--mx),var(--my),0)}
     body.animillReticle .cursor{width:10px;height:10px;background:var(--gold);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);margin:-5px 0 0 -5px;box-shadow:0 0 22px color-mix(in srgb,var(--gold) 80%,transparent)}
