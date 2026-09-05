@@ -23,8 +23,8 @@ Stabilize the existing ANIMILL authoring loop before accepting another feature f
 
 **ANIMILL viewer/text/element/timeline gate: verified.** No production refactor was needed in this slice; direct editing and geometry persistence are now protected by regression coverage.
 
-The geometry parity repair is also verified: a fresh representative project completed HyperFrames and Remotion MP4 renders after the tween change, while the exporter regression locks authored transform values on motion blocks.
+The geometry parity repair is also verified: a fresh representative project completed HyperFrames and Remotion MP4 renders after the tween change, the exporter regression locks authored transform values on motion blocks, and the standalone export contract is checked for authored rotation/scale application.
 
 ## Next bounded intake
 
-Use fresh input to audit the remaining high-fan-out contracts: standalone and Remotion geometry snapshots plus text-effect parity. Accept a code change only when a reproducible break is found and its cross-surface proof is added.
+Use fresh input to audit the remaining high-fan-out contracts: Remotion geometry snapshots plus text-effect parity. Accept a code change only when a reproducible break is found and its cross-surface proof is added.

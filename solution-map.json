@@ -172,7 +172,7 @@
       "acceptance": ["Fresh browser proof drags a stage block, resizes and restores its geometry, moves a full-workbench audio clip, resizes its edge, and checks selection/inspector state."],
       "fallback": ["Keep the existing interaction path and isolate any future defect to the smallest shared contract."],
       "status": "verified",
-      "evidence": ["animill-studio/tests/ui-editor.test.mjs passes 16/16", "Dedicated timeline-edit fixture covers move, resize, selection, and inspector synchronization", "Dedicated geometry fixture covers selection-frame resize, Alt-rotate, text focus, and browser save/restore", "HyperFrames exporter regression proves motion tweens retain authored rotation and scale", "Fresh manual probe confirms visible stage drag updates x/y"]
+      "evidence": ["animill-studio/tests/ui-editor.test.mjs passes 17/17", "Dedicated timeline-edit fixture covers move, resize, selection, and inspector synchronization", "Dedicated geometry fixture covers selection-frame resize, Alt-rotate, text focus, and browser save/restore", "Standalone export contract proof retains authored rotation and scale", "HyperFrames exporter regression proves motion tweens retain authored rotation and scale", "Fresh manual probe confirms visible stage drag updates x/y"]
     },
     {
       "id": "representative-proof",
@@ -203,5 +203,5 @@
     "Pointer feedback can regress into full-viewport repaint or layout translation if shared chrome adds animated background or transform rules.",
     "One-hour authoring behavior is verified, but a full one-hour MP4 performance render is not yet benchmarked."
   ],
-  "next_unlocked_capability": "Audit ANIMILL standalone/Remotion geometry snapshots and text-effect parity; accept a production change only when a reproducible break and cross-surface proof are both present."
+  "next_unlocked_capability": "Audit ANIMILL Remotion geometry snapshots and text-effect parity; accept a production change only when a reproducible break and cross-surface proof are both present."
 }

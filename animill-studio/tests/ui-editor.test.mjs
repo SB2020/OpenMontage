@@ -329,6 +329,10 @@ test('editor keeps project, inspector, timeline, and viewer state in sync', {tim
   assert.equal(restoredBlock.x, 100, 'browser restore must recover saved geometry');
   assert.equal(restoredBlock.scale, resizedBlock.scale, 'browser restore must recover saved scale');
   assert.equal(restoredBlock.rotation, rotatedBlock.rotation, 'browser restore must recover saved rotation');
+  const standaloneHtml = await page.evaluate(() => window.ANIMILL.exportHTML());
+  assert.match(standaloneHtml, /function render\(ms\)/, 'standalone export must include its deterministic player');
+  assert.match(standaloneHtml, /\(\(b\.rotation\|\|0\)\+\(st\.rot\|\|0\)\)/, 'standalone player must apply authored rotation');
+  assert.match(standaloneHtml, /\(\(b\.scale\|\|1\)\*st\.scale\)/, 'standalone player must apply authored scale');
 
   await page.setViewport({width: 1000, height: 1000});
   await page.goto(`${origin}/nana.html`, {waitUntil: 'networkidle0'});
