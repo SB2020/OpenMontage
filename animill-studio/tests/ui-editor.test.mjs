@@ -248,6 +248,71 @@ test('editor keeps project, inspector, timeline, and viewer state in sync', {tim
   });
   assert.equal(animillTimelineMetrics.sharedStylesheet, true, 'ANIMILL must load the shared timeline primitive');
 
+  await page.click('#closeExport');
+  await page.evaluate(() => window.ANIMILL.loadState({
+    id: 'timeline-edit', name: 'Timeline edit', aspect: 'desktop_16_9', fps: 30, activeScene: 0, assets: [],
+    scenes: [{id: 'scene-1', name: 'One', duration: 20_000, audio: [
+      {id: 'audio-1', track: 'audioA', label: 'Timeline cue', start: 1_000, dur: 5_000, recipe: 0},
+    ], effects: [], blocks: []}],
+  }));
+  await page.click('#fullTlBtn');
+  await page.waitForSelector('.clip[data-id="audio-1"]');
+  const timelineEditBefore = await page.$eval('.clip[data-id="audio-1"]', (node) => {
+    const rect = node.getBoundingClientRect();
+    return {x: rect.x, y: rect.y, width: rect.width, height: rect.height};
+  });
+  await page.mouse.move(timelineEditBefore.x + timelineEditBefore.width / 2, timelineEditBefore.y + timelineEditBefore.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(timelineEditBefore.x + timelineEditBefore.width / 2 + 64, timelineEditBefore.y + timelineEditBefore.height / 2, {steps: 4});
+  await page.mouse.up();
+  const timelineMoved = await page.evaluate(() => ({
+    start: window.ANIMILL.getState().scenes[0].audio[0].start,
+    selected: document.querySelector('.clip[data-id="audio-1"]')?.classList.contains('selected'),
+    inspector: document.querySelector('#inspectorTitle')?.textContent,
+  }));
+  assert.ok(timelineMoved.start > 1_000, 'direct timeline dragging must edit an audio cue start');
+  assert.equal(timelineMoved.selected, true, 'direct timeline dragging must keep the clip selected');
+  assert.match(timelineMoved.inspector, /audioA/, 'timeline selection must drive the inspector');
+  const timelineEditAfterMove = await page.$eval('.clip[data-id="audio-1"]', (node) => {
+    const rect = node.getBoundingClientRect();
+    return {x: rect.x, y: rect.y, width: rect.width, height: rect.height};
+  });
+  await page.mouse.move(timelineEditAfterMove.x + timelineEditAfterMove.width - 4, timelineEditAfterMove.y + timelineEditAfterMove.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(timelineEditAfterMove.x + timelineEditAfterMove.width + 80, timelineEditAfterMove.y + timelineEditAfterMove.height / 2, {steps: 4});
+  await page.mouse.up();
+  const timelineResized = await page.evaluate(() => window.ANIMILL.getState().scenes[0].audio[0].dur);
+  assert.ok(timelineResized > 5_000, 'direct timeline edge dragging must edit an audio cue duration');
+  await page.click('#closeFullTl');
+
+  await page.evaluate(() => {
+    window.ANIMILL.loadState({
+      id: 'geometry-edit', name: 'Geometry edit', aspect: 'desktop_16_9', fps: 30, activeScene: 0, assets: [],
+      scenes: [{id: 'scene-1', name: 'One', duration: 20_000, audio: [], effects: [], blocks: [
+        {id: 'text-1', type: 'hero', content: 'Scale me', micro: 'none', x: 100, y: 100, w: 600, h: 120, start: 0, dur: 10_000},
+      ]}],
+    });
+    window.ANIMILL.gotoMs(1_000);
+    window.ANIMILL.selectBlock('text-1');
+  });
+  await page.waitForSelector('#selFrame.on .gh.se');
+  const handleBefore = await page.$eval('#selFrame .gh.se', (node) => {
+    const rect = node.getBoundingClientRect();
+    return {x: rect.x, y: rect.y, width: rect.width, height: rect.height};
+  });
+  await page.mouse.move(handleBefore.x + handleBefore.width / 2, handleBefore.y + handleBefore.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(handleBefore.x + 35, handleBefore.y + 35, {steps: 4});
+  await page.mouse.up();
+  const resizedBlock = await page.evaluate(() => window.ANIMILL.getState().scenes[0].blocks[0]);
+  assert.ok(resizedBlock.scale > 1, 'selection-frame resize must edit canonical block scale');
+  await page.click('#saveBtn');
+  await page.evaluate(() => window.ANIMILL.updateBlock('text-1', {x: 900}));
+  await page.click('#restoreBtn');
+  const restoredBlock = await page.evaluate(() => window.ANIMILL.getState().scenes[0].blocks[0]);
+  assert.equal(restoredBlock.x, 100, 'browser restore must recover saved geometry');
+  assert.equal(restoredBlock.scale, resizedBlock.scale, 'browser restore must recover saved scale');
+
   await page.setViewport({width: 1000, height: 1000});
   await page.goto(`${origin}/nana.html`, {waitUntil: 'networkidle0'});
   assert.match(await page.$eval('.brand', (node) => node.textContent), /NANA STORYWORLDS/);

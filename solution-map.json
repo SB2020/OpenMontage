@@ -163,6 +163,18 @@
       "evidence": ["ANIMILL shell tokens and shared light/hover layer are now applied to Worlds", "Fresh browser audit passes existing control path: fields, themes, voices, timeline edits, save/reload, beat-plan export, OpenMontage handoff, ANIMILL handoff, collapse/expand, and compact layout"]
     },
     {
+      "id": "animill-viewer-timeline-audit",
+      "outcome": "The existing ANIMILL viewer, stage elements, inspector, and direct timeline edits stay synchronized under fresh input.",
+      "inputs": ["stage pointer edits", "timeline clip move/resize", "canonical project state"],
+      "outputs": ["selection-safe geometry and timing edits with inspector feedback"],
+      "depends_on": ["editor-loop", "viewer-timeline", "long-timeline-authoring"],
+      "interface_contract": ["Visible stage dragging mutates canonical geometry.", "Selection-frame resize mutates canonical scale and save/restore preserves it.", "Timeline move and resize mutate canonical timing.", "Selection and inspector remain synchronized for both block and audio clips."],
+      "acceptance": ["Fresh browser proof drags a stage block, resizes and restores its geometry, moves a full-workbench audio clip, resizes its edge, and checks selection/inspector state."],
+      "fallback": ["Keep the existing interaction path and isolate any future defect to the smallest shared contract."],
+      "status": "verified",
+      "evidence": ["animill-studio/tests/ui-editor.test.mjs passes 16/16", "Dedicated timeline-edit fixture covers move, resize, selection, and inspector synchronization", "Dedicated geometry fixture covers selection-frame resize and browser save/restore", "Fresh manual probe confirms visible stage drag updates x/y"]
+    },
+    {
       "id": "representative-proof",
       "outcome": "A realistic multi-scene project proves the whole workflow under normal use and failure cases.",
       "inputs": ["fresh multi-scene text, image, audio, and effect project"],
@@ -191,5 +203,5 @@
     "Pointer feedback can regress into full-viewport repaint or layout translation if shared chrome adds animated background or transform rules.",
     "One-hour authoring behavior is verified, but a full one-hour MP4 performance render is not yet benchmarked."
   ],
-  "next_unlocked_capability": "Accept the next Worlds component only through the shared shell, state, handoff, compact-layout, and fresh-proof gates; keep ANIMILL viewer/text/timeline fault work as the next bounded intake."
+  "next_unlocked_capability": "Audit ANIMILL Alt-rotate behavior, text inspector focus during pointer edits, and geometry parity across standalone/HyperFrames/Remotion; accept a production change only when a reproducible break and cross-surface proof are both present."
 }
