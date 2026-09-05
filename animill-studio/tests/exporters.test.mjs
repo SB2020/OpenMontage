@@ -46,6 +46,16 @@ test('HyperFrames exporter preserves the production-safe chrome edge effect', ()
   assert.match(html, /text-shadow:0 1px 0/);
 });
 
+test('HyperFrames entrance tweens preserve authored rotation and scale', () => {
+  const project = freshProject();
+  project.scenes[0].blocks[0].motion = 'fade-up';
+  project.scenes[0].blocks[0].rotation = 27;
+  project.scenes[0].blocks[0].scale = 1.35;
+  const html = toHyperframesHtml(project);
+  assert.match(html, /scale:1\.35,rotation:27/, 'the tween target must retain authored transform values');
+  assert.match(html, /\"y\":48/, 'the entrance offset must remain intact');
+});
+
 test('Renderer preflight rejects browser-only blob assets', () => {
   const project = freshProject();
   project.scenes[0].blocks[0].type = 'video';

@@ -11,6 +11,7 @@ Stabilize the existing ANIMILL authoring loop before accepting another feature f
 - Timeline selection drives the inspector, including audio clips that do not have a stage block.
 - The selection-frame resize handle mutates canonical scale, and browser save/restore preserves the edited geometry.
 - Alt-drag rotation mutates canonical rotation, and pointer travel does not steal focus from the text inspector.
+- Motion entrance tweens preserve authored rotation and scale in HyperFrames, matching ANIMILL/standalone/Remotion geometry.
 - A one-hour scene remains a valid bounded timeline and keeps its hour-aware ruler/readouts.
 - Shared ANIMILL chrome remains compositor-safe and hover feedback does not move controls.
 
@@ -22,6 +23,8 @@ Stabilize the existing ANIMILL authoring loop before accepting another feature f
 
 **ANIMILL viewer/text/element/timeline gate: verified.** No production refactor was needed in this slice; direct editing and geometry persistence are now protected by regression coverage.
 
+The geometry parity repair is also verified: a fresh representative project completed HyperFrames and Remotion MP4 renders after the tween change, while the exporter regression locks authored transform values on motion blocks.
+
 ## Next bounded intake
 
-Use fresh input to audit the remaining high-fan-out contract: geometry parity in standalone/HyperFrames/Remotion. Accept a code change only when a reproducible break is found and its cross-surface proof is added.
+Use fresh input to audit the remaining high-fan-out contracts: standalone and Remotion geometry snapshots plus text-effect parity. Accept a code change only when a reproducible break is found and its cross-surface proof is added.

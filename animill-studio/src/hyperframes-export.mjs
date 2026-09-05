@@ -95,7 +95,12 @@ export function toHyperframesHtml(input) {
       const from = motionFrom(block);
       if (from) {
         const tweenDuration = Math.min(blockDuration, Math.max(0.25, Number(block.transitionDuration || 700) / 1000));
-        tweens.push(`tl.fromTo(${js(`#animill-block-${index}`)}, ${js(from)}, {opacity:${block.opacity ?? 1},x:0,y:0,scale:1,rotation:0,rotationX:0,rotationY:0,filter:'none',duration:${tweenDuration.toFixed(3)},ease:'power3.out'}, ${start.toFixed(3)});`);
+        const baseScale = Number(block.scale ?? 1);
+        const baseRotation = Number(block.rotation ?? 0);
+        const fromTween = {...from};
+        if (fromTween.scale != null) fromTween.scale *= baseScale;
+        if (fromTween.rotation != null) fromTween.rotation += baseRotation;
+        tweens.push(`tl.fromTo(${js(`#animill-block-${index}`)}, ${js(fromTween)}, {opacity:${block.opacity ?? 1},x:0,y:0,scale:${baseScale},rotation:${baseRotation},rotationX:0,rotationY:0,filter:'none',duration:${tweenDuration.toFixed(3)},ease:'power3.out'}, ${start.toFixed(3)});`);
       }
     }
     const soundtrack = scene.soundtrack;
