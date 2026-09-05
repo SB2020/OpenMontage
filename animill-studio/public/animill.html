@@ -2058,9 +2058,6 @@ window.addEventListener('keydown',e=>{
   if(e.code==='Space'){e.preventDefault();play();}
   if(e.key==='Delete'||e.key==='Backspace'){e.preventDefault();deleteSelected();}
 });
-window.addEventListener('mouseover',e=>{if(e.target.closest('button,.toolItem,.clip,.block,input,select,textarea'))document.body.classList.add('hot')});
-window.addEventListener('mouseout',e=>{if(e.target.closest('button,.toolItem,.clip,.block,input,select,textarea'))document.body.classList.remove('hot')});
-
 /* ---------- UI feedback sounds ---------- */
 const UI_HOT='button,.tabBtn,.toolItem,.iconBtn,.ghostBtn,.glyphBtn,.clip,.block,.chip,.swatch,select,[data-add],[data-layer],[data-scene]';
 window.addEventListener('pointerover',e=>{
@@ -2228,4 +2225,5 @@ Single edits: ANIMILL.addBlock(type,text,opts) / updateBlock(id,props) / applyTh
 };
 
 </script>
+<script src="/animill-chrome.js"></script>
 </body></html>

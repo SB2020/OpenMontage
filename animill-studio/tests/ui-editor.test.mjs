@@ -183,6 +183,16 @@ test('editor keeps project, inspector, timeline, and viewer state in sync', {tim
 
   await page.goto(`${origin}/nana.html`, {waitUntil: 'networkidle0'});
   assert.match(await page.$eval('.brand', (node) => node.textContent), /NANA STORYWORLDS/);
+  assert.equal(await page.$eval('#pointerInfo', (node) => node.getAttribute('aria-hidden')), 'true', 'NANA and ANIMILL must share the reticle information layer');
+  await page.select('#themeSelect', 'mint');
+  assert.equal(await page.$eval('body', (node) => node.dataset.theme), 'mint');
+  const timelineBox = await page.$eval('#timeline', (node) => { const rect = node.getBoundingClientRect(); return {left: rect.left, top: rect.top, width: rect.width}; });
+  await page.mouse.click(timelineBox.left + 82 + (timelineBox.width - 82) * 0.5, timelineBox.top + 10);
+  assert.match(await page.$eval('#clock', (node) => node.textContent), /^9\.0 \/ 18\.0s$/, 'timeline click must scrub the NANA playhead');
+  await page.click('#step');
+  assert.match(await page.$eval('#clock', (node) => node.textContent), /^9\.5 \/ 18\.0s$/, 'transport step must advance from the scrubbed time');
+  await page.click('#loop');
+  assert.equal(await page.$eval('#loop', (node) => node.getAttribute('aria-pressed')), 'true');
   await page.click('[data-key="talkback"]');
   await page.$eval('#projectName', (input) => { input.value = 'Talkback proof'; });
   await page.click('#animill');
