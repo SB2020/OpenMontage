@@ -157,10 +157,10 @@
       "outputs": ["standardized Worlds authoring surface and integration contract"],
       "depends_on": ["editor-loop", "long-timeline-authoring", "shared-interaction-chrome"],
       "interface_contract": ["Existing Worlds controls remain available and truthful.", "Shell and interaction styling comes from ANIMILL tokens and shared chrome.", "No new feature family is accepted until the existing path is proven end to end."],
-      "acceptance": ["Plan is visible in docs/WORLDS_INTEGRATION_PLAN.md.", "Fresh browser proof covers shell tokens, pointer layer, hover stability, timeline controls, save/reload, and both handoff entry points."],
+      "acceptance": ["Plan is visible in docs/WORLDS_INTEGRATION_PLAN.md.", "Fresh browser proof covers shell tokens, pointer layer, hover stability, timeline controls, save/reload, beat-plan export, compact layout, and both handoff entry points."],
       "fallback": ["Keep the capability in Worlds but visibly mark any unproven control as pending instead of expanding scope."],
-      "status": "in_progress",
-      "evidence": ["ANIMILL shell tokens and shared light/hover layer are now applied to Worlds", "End-to-end control and handoff audit remains the next execution node"]
+      "status": "verified",
+      "evidence": ["ANIMILL shell tokens and shared light/hover layer are now applied to Worlds", "Fresh browser audit passes existing control path: fields, themes, voices, timeline edits, save/reload, beat-plan export, OpenMontage handoff, ANIMILL handoff, collapse/expand, and compact layout"]
     },
     {
       "id": "representative-proof",
@@ -191,5 +191,5 @@
     "Pointer feedback can regress into full-viewport repaint or layout translation if shared chrome adds animated background or transform rules.",
     "One-hour authoring behavior is verified, but a full one-hour MP4 performance render is not yet benchmarked."
   ],
-  "next_unlocked_capability": "Continue the ANIMILL viewer, text, element-interface, and timeline fault sweep without adding unrelated features."
+  "next_unlocked_capability": "Accept the next Worlds component only through the shared shell, state, handoff, compact-layout, and fresh-proof gates; keep ANIMILL viewer/text/timeline fault work as the next bounded intake."
 }
