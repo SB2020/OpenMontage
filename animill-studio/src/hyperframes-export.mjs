@@ -67,7 +67,7 @@ function blockMarkup(block, globalStart, duration, index) {
   ].join(';');
   const src = esc(block.src || '');
   if (block.type === 'image' && src) return `<img ${common} src="${src}" alt="${esc(block.content || '')}" style="${style};height:${Number(block.h || 400)}px;object-fit:${esc(block.fit || 'cover')}" />`;
-  if (block.type === 'video' && src) return `<video ${common} src="${src}" style="${style};height:${Number(block.h || 400)}px;object-fit:${esc(block.fit || 'cover')}" ${block.muted ? 'muted' : ''} ${block.loop ? 'loop' : ''} playsinline></video>`;
+  if (block.type === 'video' && src) return `<video ${common}${block.muted ? '' : ' data-has-audio="true"'} src="${src}" style="${style};height:${Number(block.h || 400)}px;object-fit:${esc(block.fit || 'cover')}" ${block.muted ? 'muted' : ''} ${block.loop ? 'loop' : ''} playsinline></video>`;
   if (block.type === 'shape') return `<div ${common} style="${style};height:${Number(block.h || 100)}px;background:${esc(block.color || '#181820')}"></div>`;
   const effectClass = block.effect && block.effect !== 'none' ? ` animill-effect-${esc(block.effect)}` : '';
   return `<div ${common} style="${style}"><span class="animill-content${effectClass}">${esc(block.content || '')}</span></div>`;

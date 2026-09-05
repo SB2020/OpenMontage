@@ -1,4 +1,4 @@
-import {mkdir, writeFile} from 'node:fs/promises';
+import {copyFile, mkdir, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 
 const extensions = {
@@ -14,14 +14,24 @@ function decodeDataUrl(value) {
   return {mime: match[1].toLowerCase(), bytes: Buffer.from(match[2], 'base64')};
 }
 
-export async function materializeDataAssets(input, workspace) {
+export async function materializeDataAssets(input, workspace, options = {}) {
   const project = structuredClone(input);
   const assetDir = path.join(workspace, 'assets');
   let index = 0;
   const materialize = async (value, stem) => {
     const decoded = decodeDataUrl(value);
-    if (!decoded) return value;
     await mkdir(assetDir, {recursive: true});
+    if (!decoded && typeof value === 'string' && value.startsWith('/openmontage-assets/') && options.localAssetsRoot) {
+      const relative = decodeURIComponent(value.slice('/openmontage-assets/'.length)).replaceAll('/', path.sep);
+      const source = path.resolve(options.localAssetsRoot, relative);
+      const localRoot = path.resolve(options.localAssetsRoot);
+      if (source !== localRoot && !source.startsWith(`${localRoot}${path.sep}`)) throw new Error('Local asset path escapes the OpenMontage asset library');
+      const extension = path.extname(source) || '.bin';
+      const filename = `${stem}-${index++}${extension}`;
+      await copyFile(source, path.join(assetDir, filename));
+      return `./assets/${filename}`;
+    }
+    if (!decoded) return value;
     const extension = extensions[decoded.mime] || 'bin';
     const filename = `${stem}-${index++}.${extension}`;
     await writeFile(path.join(assetDir, filename), decoded.bytes);

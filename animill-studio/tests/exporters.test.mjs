@@ -72,6 +72,16 @@ test('HyperFrames entrance tweens preserve authored rotation and scale', () => {
   assert.match(html, /\"y\":54/, 'the entrance offset must remain intact');
 });
 
+test('HyperFrames declares audible video tracks explicitly', () => {
+  const project = freshProject();
+  project.scenes[0].blocks[0] = {...project.scenes[0].blocks[0], type: 'video', src: '/openmontage-assets/local.mp4', muted: false, audioEnabled: false};
+  assert.match(toHyperframesHtml(project), /<video [^>]*data-has-audio="true"/);
+  project.scenes[0].blocks[0].muted = true;
+  const muted = toHyperframesHtml(project);
+  assert.match(muted, /<video [^>]* muted /);
+  assert.doesNotMatch(muted, /data-has-audio/);
+});
+
 test('Renderer preflight rejects browser-only blob assets', () => {
   const project = freshProject();
   project.scenes[0].blocks[0].type = 'video';

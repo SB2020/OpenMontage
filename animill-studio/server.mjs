@@ -18,6 +18,7 @@ const app = express();
 const port = Number(process.env.ANIMILL_PORT || 4177);
 const jobs = new Map();
 const openMontageRoot = path.resolve(root, '..');
+const localAssetBase = () => `http://127.0.0.1:${port}`;
 const toolEntry = (name) => {
   if (name === 'hyperframes') return path.join(root, 'node_modules', 'hyperframes', 'bin', 'hyperframes.mjs');
   if (name === 'remotion') return path.join(root, 'node_modules', '@remotion', 'cli', 'remotion-cli.js');
@@ -27,7 +28,21 @@ const runTool = (name, args, cwd, job) => run(process.execPath, [toolEntry(name)
 
 app.use(express.json({limit: '80mb'}));
 app.use('/renders', express.static(path.join(root, 'renders')));
+app.use('/openmontage-assets', express.static(path.join(openMontageRoot, 'assets')));
 app.use(express.static(path.join(root, 'public')));
+
+function resolveLocalAssetUrls(input) {
+  const project = structuredClone(input);
+  const resolve = value => typeof value === 'string' && value.startsWith('/openmontage-assets/') ? `${localAssetBase()}${value}` : value;
+  for (const scene of project.scenes || []) {
+    for (const block of scene.blocks || []) block.src = resolve(block.src);
+    if (scene.soundtrack) {
+      if (scene.soundtrack.src) scene.soundtrack.src = resolve(scene.soundtrack.src);
+      if (scene.soundtrack.url) scene.soundtrack.url = resolve(scene.soundtrack.url);
+    }
+  }
+  return project;
+}
 
 function run(command, args, cwd, job) {
   return new Promise((resolve, reject) => {
@@ -67,7 +82,7 @@ async function runtimeStatus() {
 async function renderHyperframes(project, jobDir, output, job) {
   const workspace = path.join(jobDir, 'hyperframes');
   await mkdir(workspace, {recursive: true});
-  const portableProject = await materializeDataAssets(project, workspace);
+  const portableProject = await materializeDataAssets(project, workspace, {localAssetsRoot: path.join(openMontageRoot, 'assets')});
   await writeFile(path.join(workspace, 'index.html'), toHyperframesHtml(portableProject), 'utf8');
   await writeFile(path.join(workspace, 'animill-manifest.json'), JSON.stringify(hyperframesManifest(project), null, 2), 'utf8');
   await copyFile(path.join(root, 'node_modules', 'gsap', 'dist', 'gsap.min.js'), path.join(workspace, 'gsap.min.js'));
@@ -78,6 +93,7 @@ async function renderHyperframes(project, jobDir, output, job) {
 }
 
 async function renderRemotion(project, jobDir, output, job) {
+  project = resolveLocalAssetUrls(project);
   const props = path.join(jobDir, 'props.json');
   await writeFile(props, JSON.stringify({project}, null, 2), 'utf8');
   job.phase = 'rendering';

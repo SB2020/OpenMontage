@@ -8,11 +8,47 @@ export function projectSlug(value) {
 }
 
 function sceneType(scene) {
+  if (scene.talkingHead || scene.talking_head || scene.avatar) return 'talking_head';
   const types = new Set((scene.blocks || []).map(block => block.type));
   if (types.has('video')) return 'broll';
   if (types.has('image')) return 'generated';
   if ([...types].some(type => ['shape', 'svg', 'glyph'].includes(type))) return 'animation';
   return 'text_card';
+}
+
+function creativeContext(project, scene) {
+  const talkingHead = scene.talkingHead || scene.talking_head || scene.avatar || project.talkingHead || null;
+  return {
+    source: project.metadata?.source || null,
+    kind: project.metadata?.kind || null,
+    world: scene.world || project.world || null,
+    talking_head: talkingHead,
+    audio: (scene.audio || []).map(cue => ({
+      id: cue.id || null,
+      label: cue.label || null,
+      track: cue.track || null,
+      start_ms: Number(cue.start || 0),
+      duration_ms: Number(cue.dur || 0),
+      voice_name: cue.voiceName || null,
+      voice_uri: cue.voiceURI || null,
+      provider: cue.provider || null,
+      provenance: cue.provenance || null,
+    })),
+  };
+}
+
+function sourceManifestSources(project) {
+  const sources = (project.assets || []).map(asset => ({id: asset.id, name: asset.name, type: asset.type, url: asset.url || null, source_url: asset.sourceUrl || null, rights: asset.rights || 'unknown', commercial: Boolean(asset.commercial)}));
+  const seen = new Set(sources.flatMap(source => [source.id, source.url].filter(Boolean)));
+  for (const scene of project.scenes) {
+    for (const block of scene.blocks || []) {
+      if (!['image', 'video'].includes(block.type) || !block.src || seen.has(block.id) || seen.has(block.src)) continue;
+      sources.push({id: block.id, name: block.content || block.type, type: block.type, url: block.src, source_url: block.sourceUrl || null, rights: block.rights || 'unknown', commercial: Boolean(block.commercial), scene_id: scene.id});
+      seen.add(block.id);
+      seen.add(block.src);
+    }
+  }
+  return sources;
 }
 
 function sceneDescription(scene) {
@@ -30,10 +66,13 @@ export function toOpenMontageArtifacts(rawProject, renderRuntime = 'hyperframes'
   const project = validateProject(structuredClone(rawProject));
   if (!['hyperframes', 'remotion'].includes(renderRuntime)) throw new Error('renderRuntime must be hyperframes or remotion');
   let cursor = 0;
+  const sceneContexts = [];
   const scenes = project.scenes.map((scene, index) => {
     const start = cursor;
     const duration = Number(scene.duration || 0) / 1000;
     cursor += duration;
+    const context = creativeContext(project, scene);
+    sceneContexts.push({scene_id: scene.id || `scene-${index + 1}`, ...context});
     return {
       id: scene.id || `scene-${index + 1}`,
       type: sceneType(scene),
@@ -48,6 +87,7 @@ export function toOpenMontageArtifacts(rawProject, renderRuntime = 'hyperframes'
       narrative_role: index === 0 ? 'introduce_subject' : index === project.scenes.length - 1 ? 'resolution' : 'deliver_payload',
       information_role: sceneDescription(scene),
       hero_moment: Boolean((scene.blocks || []).some(block => ['hero', 'counter'].includes(block.type))),
+      ...(context.talking_head ? {overlay_notes: 'Talking-head media, overlays, and audio remain editable in the linked ANIMILL project.'} : {}),
       required_assets: (scene.blocks || []).filter(block => ['image', 'video'].includes(block.type)).map(block => ({type: block.type, description: block.content || block.src || block.type, source: 'provided'})),
     };
   });
@@ -63,12 +103,12 @@ export function toOpenMontageArtifacts(rawProject, renderRuntime = 'hyperframes'
     reason: 'Authored in ANIMILL and handed to the locked OpenMontage composition runtime',
   }));
   return {
-    scenePlan: {version: '1.0', style_playbook: 'animill-authored', scenes, metadata: {source: 'ANIMILL 7', project_id: project.id, total_duration_seconds: cursor}},
+    scenePlan: {version: '1.0', style_playbook: 'animill-authored', scenes, metadata: {source: 'ANIMILL 7', project_id: project.id, total_duration_seconds: cursor, creative_context: {metadata: project.metadata || null, world: project.world || null, talking_head: project.talkingHead || null, scenes: sceneContexts}}},
     editDecisions: {version: '1.0', cuts, render_runtime: renderRuntime, renderer_family: 'animation-first', slideshow_risk_score: {average: 0, verdict: 'strong'}, metadata: {source: 'ANIMILL 7', runtime_locked: true}},
     animillProject: project,
     sourceManifest: {
       version: '1.0',
-      sources: (project.assets || []).map(asset => ({id: asset.id, name: asset.name, type: asset.type, url: asset.url || null, source_url: asset.sourceUrl || null, rights: asset.rights || 'unknown', commercial: Boolean(asset.commercial)})),
+      sources: sourceManifestSources(project),
     },
   };
 }
@@ -93,4 +133,3 @@ export async function exportToOpenMontage(rawProject, renderRuntime, openMontage
   ]);
   return {projectSlug: slug, projectRoot, artifactRoot, renderRuntime, files};
 }
-

@@ -27,3 +27,23 @@ test('ANIMILL maps to valid OpenMontage artifact contracts', () => {
   assert.equal(result.editDecisions.cuts[0].source, 'artifacts/animill-project.json#scene-1');
   assert.equal(result.sourceManifest.sources[0].rights, 'unknown');
 });
+
+test('talking-head world and voice context survives the OpenMontage handoff', () => {
+  const talkingHeadProject = {
+    id: 'talking-head-proof', name: 'Talking Head Proof', aspect: 'desktop_16_9', fps: 30,
+    metadata: {source: 'WAN2', kind: 'talking-head'},
+    world: {id: 'world-flight', name: 'Flight World'},
+    scenes: [{id: 'scene-head', name: 'Cockpit intro', duration: 12_000,
+      talkingHead: {videoSrc: 'https://example.com/presenter.mp4', provider: 'existing'},
+      audio: [{id: 'voice-1', track: 'audioA', label: 'Pilot narration', start: 0, dur: 4_000, voiceName: 'Local voice', voiceURI: 'local:test'}],
+      effects: [], blocks: [{id: 'head-video', type: 'video', content: 'Pilot', src: 'https://example.com/presenter.mp4', start: 0, dur: 12_000}],
+    }],
+  };
+  const result = toOpenMontageArtifacts(talkingHeadProject, 'remotion');
+  assert.equal(result.scenePlan.scenes[0].type, 'talking_head');
+  assert.equal(result.scenePlan.metadata.creative_context.world.name, 'Flight World');
+  assert.equal(result.scenePlan.metadata.creative_context.scenes[0].audio[0].voice_name, 'Local voice');
+  assert.equal(result.scenePlan.metadata.creative_context.scenes[0].talking_head.provider, 'existing');
+  assert.equal(result.sourceManifest.sources[0].url, 'https://example.com/presenter.mp4');
+  assert.equal(result.animillProject.scenes[0].talkingHead.videoSrc, 'https://example.com/presenter.mp4');
+});

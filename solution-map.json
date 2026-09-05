@@ -183,8 +183,8 @@
       "interface_contract": ["ANIMILL remains the visual authoring source of truth.", "NANA remains the audio planning and local audition desk.", "UI standardization cannot drop IDs, timing, media references, authored geometry, voice metadata, or provenance.", "Existing talking-head and AI artifacts are wired into the current compose/import path; no new provider or generation surface is required."],
       "acceptance": ["docs/CREATIVE_INTEGRATION_SPINE.md is the visible map.", "One existing AI or talking-head fixture enters the current ANIMILL shell and its audio/world metadata remains visible in the inspector and timeline.", "The same fixture can be handed to OpenMontage without a second project model."],
       "fallback": ["Keep the existing artifact path and mark any unmapped field visibly pending; do not replace it with a new generator."],
-      "status": "in_progress",
-      "evidence": ["NANA → ANIMILL audio handoff is verified", "Prompt generators already target ANIMILL.compose(spec)", "Existing OpenMontage talking-head/avatar pipeline definitions are available for the fixture mapping"]
+      "status": "verified",
+      "evidence": ["Creative Intake loads an existing AI/world/talking-head compose spec into the branded ANIMILL shell", "Talking-head media is materialized as an editable full-frame video block while world and voice metadata remain visible in the inspector", "OpenMontage handoff identifies the scene as talking_head and preserves world, talking-head, audio, voice, source, and provenance context", "The repository-local signal video rendered successfully with AAC audio through both HyperFrames and Remotion"]
     },
     {
       "id": "representative-proof",
@@ -216,5 +216,5 @@
     "Pointer feedback can regress into full-viewport repaint or layout translation if shared chrome adds animated background or transform rules.",
     "One-hour authoring behavior is verified, but a full one-hour MP4 performance render is not yet benchmarked."
   ],
-  "next_unlocked_capability": "Connect one existing AI or talking-head artifact through the standardized ANIMILL shell, preserving its world/audio metadata; do not add a new generation surface."
+  "next_unlocked_capability": "Run the final normal-layout creator pass and repair only user-visible editor defects; do not expand generators, providers, or effect families."
 }
