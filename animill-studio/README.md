@@ -51,3 +51,20 @@ Browser-only `blob:` asset URLs are rejected because a server renderer cannot re
 ## Prompt-generator handoff
 
 Claude, WAN2, and other prompt generators should emit the existing `ANIMILL.compose(spec)` schema. Rendering remains a separate decision after the generated timeline has been reviewed. This preserves the prompt tools as planners and ANIMILL as the editable source of truth.
+
+## Existing creative integration spine
+
+The intended path is one connected authoring experience:
+
+`AI / prompt input → world or talking-head composition → NANA audio plan → ANIMILL authoring → OpenMontage render`
+
+Existing world, talking-head, avatar, prompt, and audio work is part of this
+path. The integration task is to bring those artifacts through the ANIMILL
+shell while preserving scene IDs, timing, media references, voice metadata,
+authored geometry, and provenance. NANA remains the audio planning and local
+audition desk; ANIMILL remains the visual source of truth; OpenMontage remains
+the governed production handoff.
+
+See [`docs/CREATIVE_INTEGRATION_SPINE.md`](../docs/CREATIVE_INTEGRATION_SPINE.md)
+for the locked UI and handoff contract. No new generation provider or parallel
+editor is required for this phase.

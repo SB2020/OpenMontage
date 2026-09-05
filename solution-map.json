@@ -175,6 +175,18 @@
       "evidence": ["animill-studio/tests/ui-editor.test.mjs passes 18/18", "Dedicated timeline-edit fixture covers move, resize, selection, and inspector synchronization", "Dedicated geometry fixture covers selection-frame resize, Alt-rotate, text focus, and browser save/restore", "Standalone export contract proof retains authored rotation and scale", "HyperFrames exporter regression proves motion tweens retain authored rotation and scale", "Fresh custom-geometry MP4 probe renders matching HyperFrames and Remotion bounds", "Canonical entrance endpoint regression covers fade, slide, scale, flip, and rotate profiles", "Fresh manual probe confirms visible stage drag updates x/y"]
     },
     {
+      "id": "creative-surface-integration",
+      "outcome": "Existing AI, world, talking-head, and audio work enters one standardized ANIMILL authoring spine without creating a parallel generator workflow.",
+      "inputs": ["ANIMILL.compose(spec) from Claude/WAN2/prompt generators", "existing world or talking-head media and metadata", "normalized NANA audio project"],
+      "outputs": ["one reviewable ANIMILL project with preserved scene, media, timing, voice, and provenance metadata", "explicit OpenMontage handoff"],
+      "depends_on": ["worlds-ui-standardization", "animill-viewer-timeline-audit", "runtime-parity"],
+      "interface_contract": ["ANIMILL remains the visual authoring source of truth.", "NANA remains the audio planning and local audition desk.", "UI standardization cannot drop IDs, timing, media references, authored geometry, voice metadata, or provenance.", "Existing talking-head and AI artifacts are wired into the current compose/import path; no new provider or generation surface is required."],
+      "acceptance": ["docs/CREATIVE_INTEGRATION_SPINE.md is the visible map.", "One existing AI or talking-head fixture enters the current ANIMILL shell and its audio/world metadata remains visible in the inspector and timeline.", "The same fixture can be handed to OpenMontage without a second project model."],
+      "fallback": ["Keep the existing artifact path and mark any unmapped field visibly pending; do not replace it with a new generator."],
+      "status": "in_progress",
+      "evidence": ["NANA → ANIMILL audio handoff is verified", "Prompt generators already target ANIMILL.compose(spec)", "Existing OpenMontage talking-head/avatar pipeline definitions are available for the fixture mapping"]
+    },
+    {
       "id": "representative-proof",
       "outcome": "A realistic multi-scene project proves the whole workflow under normal use and failure cases.",
       "inputs": ["fresh multi-scene text, image, audio, and effect project"],
@@ -194,7 +206,8 @@
     "Exercise narrow and desktop layouts with essential editing controls reachable.",
     "Apply a one-hour scene length through the visible Scenes desk and verify every timeline readout uses it.",
     "Compare shared reticle light and hover state in ANIMILL and NANA.",
-    "Sweep the pointer across empty space, controls, fields, clips, and stage blocks; confirm no layout jump and stable light tracking."
+    "Sweep the pointer across empty space, controls, fields, clips, and stage blocks; confirm no layout jump and stable light tracking.",
+    "Route one existing AI or talking-head artifact through the standardized ANIMILL shell and verify its world/audio metadata survives the inspector, timeline, save, and OpenMontage handoff."
   ],
   "risks": [
     "The large inline editor script increases regression risk until stable boundaries are extracted.",
@@ -203,5 +216,5 @@
     "Pointer feedback can regress into full-viewport repaint or layout translation if shared chrome adds animated background or transform rules.",
     "One-hour authoring behavior is verified, but a full one-hour MP4 performance render is not yet benchmarked."
   ],
-  "next_unlocked_capability": "Expand the production-safe text-effect set one named effect family at a time, starting with a fresh visual proof for animated treatments."
+  "next_unlocked_capability": "Connect one existing AI or talking-head artifact through the standardized ANIMILL shell, preserving its world/audio metadata; do not add a new generation surface."
 }
