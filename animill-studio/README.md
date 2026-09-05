@@ -31,6 +31,11 @@ The Scenes desk can set the active scene from one millisecond through one hour, 
 
 Open <http://127.0.0.1:4177/nana.html> for the connected NANA audio microdrama desk. Its local preview does not call a paid provider. **Build visual launch kit in ANIMILL** transfers the canonical timing into the editor on the same origin.
 
+The full NANA Studio master suite from `E:\e-drives\nana_master_suite.html` is
+served through ANIMILL at `/nana-studio-master.html`. The ANIMILL Connected rail
+opens that source intact, including its generator, voice/lip-sync, local music,
+WAN2GP, prompt library, project master, provider and archive desks.
+
 NANA lists every local speech voice exposed by the browser/operating system and lets each voice beat choose one independently. Timeline clips are direct controls: drag the body to move a beat, drag either edge to resize it, or double-click to focus its text editor.
 
 HyperFrames requires Node 22.12 or newer. On this Windows machine the launcher automatically selects the newer bundled Hermes Node runtime when the system Node is older.

@@ -19,6 +19,7 @@ const app = express();
 const port = Number(process.env.ANIMILL_PORT || 4177);
 const jobs = new Map();
 const openMontageRoot = path.resolve(root, '..');
+const nanaStudioSource = 'E:\\e-drives\\nana_master_suite.html';
 const localAssetBase = () => `http://127.0.0.1:${port}`;
 const toolEntry = (name) => {
   if (name === 'hyperframes') return path.join(root, 'node_modules', 'hyperframes', 'bin', 'hyperframes.mjs');
@@ -30,6 +31,10 @@ const runTool = (name, args, cwd, job) => run(process.execPath, [toolEntry(name)
 app.use(express.json({limit: '80mb'}));
 app.use('/renders', express.static(path.join(root, 'renders')));
 app.use('/openmontage-assets', express.static(path.join(openMontageRoot, 'assets')));
+app.get('/nana-studio-master.html', async (_request, response) => {
+  if (!existsSync(nanaStudioSource)) return response.status(404).type('text').send(`NANA Studio source not found: ${nanaStudioSource}`);
+  response.type('html').send(await readFile(nanaStudioSource, 'utf8'));
+});
 app.use(express.static(path.join(root, 'public')));
 
 function resolveLocalAssetUrls(input) {
