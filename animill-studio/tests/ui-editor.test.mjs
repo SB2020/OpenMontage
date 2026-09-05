@@ -59,6 +59,8 @@ test('editor keeps project, inspector, timeline, and viewer state in sync', {tim
   await new Promise((resolve) => setTimeout(resolve, 80));
   const animillChromeProof = await page.evaluate(() => ({
     light: getComputedStyle(document.querySelector('.pointerLight')).backgroundImage,
+    lightTransform: getComputedStyle(document.querySelector('.pointerLight')).transform,
+    lightWillChange: getComputedStyle(document.querySelector('.pointerLight')).willChange,
     hoverKind: document.querySelector('#addTextClip').dataset.animillHover,
     hot: document.body.classList.contains('hot'),
   }));
@@ -66,6 +68,13 @@ test('editor keeps project, inspector, timeline, and viewer state in sync', {tim
   assert.equal(animillChromeProof.hot, true);
   assert.match(animillChromeProof.light, /radial-gradient/);
   assert.match(animillChromeProof.light, /384px/, 'the shared pointer light must keep ANIMILL’s 24rem falloff');
+  assert.notEqual(animillChromeProof.lightTransform, 'none', 'the shared pointer light must move on its compositor layer');
+  assert.match(animillChromeProof.lightWillChange, /transform/);
+
+  const hoverRectBefore = await page.evaluate(() => { const r = document.querySelector('#addAudioClip').getBoundingClientRect(); return {x: r.x, y: r.y}; });
+  await page.hover('#addAudioClip');
+  const hoverRectAfter = await page.evaluate(() => { const r = document.querySelector('#addAudioClip').getBoundingClientRect(); return {x: r.x, y: r.y}; });
+  assert.deepEqual(hoverRectAfter, hoverRectBefore, 'shared hover feedback must not move controls or jerk the screen');
 
   const result = await page.evaluate(() => {
     const initial = {

@@ -145,10 +145,10 @@
       "outputs": ["moving light, reticle state, hover feedback, and pointer information"],
       "depends_on": ["workflow-clarity"],
       "interface_contract": ["Shared chrome cannot replace a stage block's motion transform.", "Coarse pointers retain native cursor behavior."],
-      "acceptance": ["Fresh browser test proves ANIMILL and NANA share the pointer light and action-hover contract."],
+      "acceptance": ["Fresh browser test proves ANIMILL and NANA share the pointer light and action-hover contract.", "Pointer movement stays on a compositor transform layer and hover feedback does not change control geometry."],
       "fallback": ["Disable decorative light while retaining native pointer and focus-visible state."],
       "status": "verified",
-      "evidence": ["animill-studio/tests/ui-editor.test.mjs shared chrome assertions pass"]
+      "evidence": ["animill-studio/tests/ui-editor.test.mjs shared chrome assertions pass", "Regression proof covers 24rem light falloff, compositor transform movement, and zero-pixel hover layout shift"]
     },
     {
       "id": "representative-proof",
@@ -169,12 +169,14 @@
     "Attempt invalid and legacy loads and verify the open project remains usable.",
     "Exercise narrow and desktop layouts with essential editing controls reachable.",
     "Apply a one-hour scene length through the visible Scenes desk and verify every timeline readout uses it.",
-    "Compare shared reticle light and hover state in ANIMILL and NANA."
+    "Compare shared reticle light and hover state in ANIMILL and NANA.",
+    "Sweep the pointer across empty space, controls, fields, clips, and stage blocks; confirm no layout jump and stable light tracking."
   ],
   "risks": [
     "The large inline editor script increases regression risk until stable boundaries are extracted.",
     "Legacy CSS effects do not yet have complete equivalents in both production runtimes.",
     "Browser object URLs remain session-only and cannot be consumed by server renderers.",
+    "Pointer feedback can regress into full-viewport repaint or layout translation if shared chrome adds animated background or transform rules.",
     "One-hour authoring behavior is verified, but a full one-hour MP4 performance render is not yet benchmarked."
   ],
   "next_unlocked_capability": "Continue the ANIMILL viewer, text, element-interface, and timeline fault sweep without adding unrelated features."

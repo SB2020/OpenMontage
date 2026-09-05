@@ -21,14 +21,14 @@
   let css=`
     :root{--mx:50vw;--my:50vh;--soft:cubic-bezier(.2,.8,.2,1)}
     body.animillReticle{cursor:none}
-    body.animillReticle .pointerLight{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(circle at var(--mx) var(--my),color-mix(in srgb,var(--gold) 20%,transparent),transparent 24rem);opacity:1;transition:opacity .18s var(--soft);will-change:background}
+    body.animillReticle .pointerLight{position:fixed;left:0;top:0;width:48rem;height:48rem;margin:-24rem 0 0 -24rem;z-index:0;pointer-events:none;transform:translate3d(var(--mx),var(--my),0);background:radial-gradient(circle,color-mix(in srgb,var(--gold) 20%,transparent),transparent 24rem);opacity:1;will-change:transform}
     body.animillReticle.hot .pointerLight{opacity:1}
     body.animillReticle .cursor,body.animillReticle .halo{position:fixed;left:0;top:0;pointer-events:none;z-index:100001;transform:translate3d(var(--mx),var(--my),0)}
     body.animillReticle .cursor{width:10px;height:10px;background:var(--gold);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);margin:-5px 0 0 -5px;box-shadow:0 0 22px color-mix(in srgb,var(--gold) 80%,transparent)}
     body.animillReticle .halo{width:46px;height:46px;margin:-23px 0 0 -23px;border:1px solid color-mix(in srgb,var(--gold) 38%,transparent);clip-path:polygon(12% 0,88% 0,100% 28%,100% 72%,88% 100%,12% 100%,0 72%,0 28%);transition:width .18s var(--soft),height .18s var(--soft),margin .18s var(--soft),border-color .18s var(--soft)}
     body.animillReticle.hot .halo{width:68px;height:68px;margin:-34px 0 0 -34px;border-color:color-mix(in srgb,var(--mint) 62%,transparent)}
-    body.animillReticle [data-animill-hover="action"]{transition:transform .16s var(--soft),border-color .16s var(--soft),filter .16s var(--soft),box-shadow .16s var(--soft)}
-    body.animillReticle [data-animill-hover="action"]:not(.block):hover{border-color:color-mix(in srgb,var(--gold) 78%,transparent);transform:translateY(-1px);filter:brightness(1.08) drop-shadow(0 8px 16px color-mix(in srgb,var(--gold) 14%,transparent))}
+    body.animillReticle [data-animill-hover="action"]{transition:border-color .16s var(--soft),filter .16s var(--soft),box-shadow .16s var(--soft)}
+    body.animillReticle [data-animill-hover="action"]:not(.block):hover{border-color:color-mix(in srgb,var(--gold) 78%,transparent);transform:none;filter:brightness(1.08) drop-shadow(0 8px 16px color-mix(in srgb,var(--gold) 14%,transparent))}
     body.animillReticle .block[data-animill-hover="action"]:hover{filter:brightness(1.06) drop-shadow(0 0 18px color-mix(in srgb,var(--gold) 18%,transparent))}
     body.animillReticle [data-animill-hover="field"]{transition:border-color .16s var(--soft),box-shadow .16s var(--soft)}
     body.animillReticle [data-animill-hover="field"]:hover{border-color:color-mix(in srgb,var(--mint) 58%,transparent);box-shadow:0 0 0 1px color-mix(in srgb,var(--mint) 10%,transparent)}
