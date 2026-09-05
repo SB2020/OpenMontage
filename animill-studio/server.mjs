@@ -22,6 +22,40 @@ const openMontageRoot = path.resolve(root, '..');
 const nanaStudioSource = 'E:\\e-drives\\nana_master_suite.html';
 function prepareNanaStudioHtml(source) {
   let html = source;
+  const findClosingDiv = function (value, start) {
+    let depth = 0;
+    const tags = /<\/?div\b[^>]*>/gi;
+    tags.lastIndex = start;
+    let match;
+    while ((match = tags.exec(value))) {
+      if (match[0].startsWith('</')) {
+        depth -= 1;
+        if (depth === 0) return match.index + match[0].length;
+      } else {
+        depth += 1;
+      }
+    }
+    return -1;
+  };
+  const layoutStart = html.indexOf('<div class="layout">');
+  const mainStart = html.indexOf('<div class="main">', layoutStart);
+  const generatorStart = html.indexOf('<div class="section" id="generator"', mainStart);
+  const generatorEnd = findClosingDiv(html, generatorStart);
+  const scriptTailStart = html.indexOf('<script>', generatorEnd);
+  if (layoutStart >= 0 && mainStart > layoutStart && generatorStart > mainStart && generatorEnd > generatorStart && scriptTailStart > generatorEnd) {
+    const topbar = html.slice(0, layoutStart);
+    const generator = html.slice(generatorStart, generatorEnd);
+    const scripts = html.slice(scriptTailStart);
+    html = topbar + '<div class="layout"><div class="main">\n' + generator + '\n</div></div>\n' + scripts;
+  }
+  const topbarRightStart = html.indexOf('<div class="topbar-right">');
+  const topbarRightEnd = findClosingDiv(html, topbarRightStart);
+  if (topbarRightStart >= 0 && topbarRightEnd > topbarRightStart) {
+    html = html.slice(0, topbarRightStart) + html.slice(topbarRightEnd);
+  }
+  html = html.replace(/\s*body:not\(\.show-archive\)[\s\S]*?#tool-imagegen \{ display:none !important; \}/, '');
+  html = html.replace(/function toggleArchiveView\(\) \{[\s\S]*?\n\}/, '');
+  html = html.replace(/\s*<div class="tnav-item" onclick="location\.href='\/production'">QUICK VIDEO<\/div>/, '');
   const outputStart = html.indexOf('      <!-- Output preview -->');
   const queueStart = html.indexOf('      <!-- Generation queue -->', outputStart);
   const gridStart = html.indexOf('  <div class="generator-grid"');
@@ -43,7 +77,7 @@ function prepareNanaStudioHtml(source) {
   if (toolsStart >= 0 && toolsEnd > toolsStart) {
     const body = html.slice(toolsStart, toolsEnd);
     const starts = [...body.matchAll(/^    \{ id:'([^']+)'/gm)];
-    const removed = new Set(['project', 'music', 'wangp', 'prompts']);
+    const removed = new Set(['project', 'music', 'wangp', 'prompts', 'vimax', 'imagegen']);
     if (starts.length) {
       let rebuilt = body.slice(0, starts[0].index);
       starts.forEach(function (match, index) {
