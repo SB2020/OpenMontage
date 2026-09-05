@@ -54,6 +54,14 @@ test('HyperFrames exporter preserves the production-safe chrome edge effect', ()
   assert.match(html, /text-shadow:0 1px 0/);
 });
 
+test('HyperFrames exports ANIMILL depth text treatments', () => {
+  const project = freshProject();
+  project.scenes[0].blocks[0].effect = 'glass-depth';
+  const html = toHyperframesHtml(project);
+  assert.match(html, /animill-effect-glass-depth/);
+  assert.match(html, /drop-shadow\(0 8px 22px/);
+});
+
 test('HyperFrames entrance tweens preserve authored rotation and scale', () => {
   const project = freshProject();
   project.scenes[0].blocks[0].motion = 'fade-up';

@@ -29,3 +29,9 @@ test('interactive-only hover state is explained but does not alter video parity'
   assert.equal(report.exact, true);
   assert.equal(report.notes[0].kind, 'interaction');
 });
+
+test('static ANIMILL text treatments are production-safe', () => {
+  const project = {scenes: [{name: 'Depth', duration: 1000, blocks: [{type: 'hero', content: 'Depth', effect: 'glass-depth'}]}]};
+  assert.equal(analyzeRuntimeCompatibility(project, 'hyperframes').exact, true);
+  assert.equal(analyzeRuntimeCompatibility(project, 'remotion').exact, true);
+});

@@ -27,6 +27,8 @@ The geometry parity repair is also verified: a fresh representative project comp
 
 A fresh custom-geometry fixture (one rotated/scaled shape, no effects) was rendered through both engines. Extracted frames matched in placement, orientation, and visible bounds. Supported entrance motion endpoints were then aligned to ANIMILL’s canonical profiles (`fade-up`, `rotate-in`, flips, scale, slide, and related transforms), followed by another representative HyperFrames/Remotion render proof.
 
+`glass-depth` and `soft-shadow` are now production-safe static text treatments in HyperFrames and Remotion, with compatibility checks preventing them from being incorrectly reported as browser-only.
+
 ## Next bounded intake
 
 Use fresh input to audit the remaining high-fan-out contract: text-effect parity. Accept a code change only when a reproducible break is found and its cross-surface proof is added.

@@ -60,6 +60,8 @@ function typography(block: Block) {
 
 function effectStyle(block: Block): React.CSSProperties {
   if (block.effect === 'chrome-edge') return {textShadow: '0 1px 0 rgba(255,255,255,.6), 0 -1px 0 rgba(0,0,0,.55), 0 0 22px rgba(242,201,104,.32)'};
+  if (block.effect === 'glass-depth') return {textShadow: '0 1px 0 rgba(255,255,255,.30), 0 12px 34px rgba(0,0,0,.55)', filter: 'drop-shadow(0 8px 22px rgba(0,0,0,.4))'};
+  if (block.effect === 'soft-shadow') return {filter: 'drop-shadow(0 16px 26px rgba(0,0,0,.6))'};
   return {};
 }
 

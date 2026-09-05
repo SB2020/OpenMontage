@@ -4,7 +4,7 @@ const COMMON_MOTIONS = new Set([
   'rise-fade', 'flip-in-x', 'flip-in-y', 'rotate-in',
 ]);
 
-const COMMON_EFFECTS = new Set(['none', 'chrome-edge']);
+const COMMON_EFFECTS = new Set(['none', 'chrome-edge', 'glass-depth', 'soft-shadow']);
 const NON_RENDERED_INTERACTIONS = new Set(['hover-pulse', 'confirm-flash', 'focus-glow']);
 
 export const runtimeCapabilities = Object.freeze({

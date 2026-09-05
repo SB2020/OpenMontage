@@ -124,6 +124,8 @@ export function toHyperframesHtml(input) {
 .animill-block{position:absolute;display:block;text-align:left;white-space:pre-wrap;overflow:visible;transform-origin:center center}
 .animill-content{display:inline-flex;align-items:center;padding:.08em .16em;min-width:18px;min-height:18px}
 .animill-effect-chrome-edge{text-shadow:0 1px 0 rgba(255,255,255,.6),0 -1px 0 rgba(0,0,0,.55),0 0 22px rgba(242,201,104,.32)}
+.animill-effect-glass-depth{text-shadow:0 1px 0 rgba(255,255,255,.30),0 12px 34px rgba(0,0,0,.55);filter:drop-shadow(0 8px 22px rgba(0,0,0,.4))}
+.animill-effect-soft-shadow{filter:drop-shadow(0 16px 26px rgba(0,0,0,.6))}
 .animill-shape{display:block}
 </style></head><body>
 <div id="animill" data-composition-id="animill" data-start="0" data-duration="${duration.toFixed(3)}" data-width="${width}" data-height="${height}" data-fps="${fps}">

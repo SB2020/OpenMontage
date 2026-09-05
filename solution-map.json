@@ -112,7 +112,7 @@
       "acceptance": ["Both MP4 routes render fresh output; paired frames are visually compared; advanced effects receive a declared support result."],
       "fallback": ["Mark an effect unsupported instead of silently changing its appearance."],
       "status": "verified",
-      "evidence": ["Fresh HyperFrames and Remotion MP4 smoke renders complete", "base typography and alignment parity repaired", "Runtime capability report and server-enforced approval gate pass automated browser and unit tests", "Exact rotate-in proof rendered successfully in both HyperFrames and Remotion"]
+      "evidence": ["Fresh HyperFrames and Remotion MP4 smoke renders complete", "base typography and alignment parity repaired", "Runtime capability report and server-enforced approval gate pass automated browser and unit tests", "Exact rotate-in proof rendered successfully in both HyperFrames and Remotion", "glass-depth and soft-shadow text treatments now have matching HyperFrames/Remotion implementations"]
     },
     {
       "id": "workflow-clarity",
@@ -203,5 +203,5 @@
     "Pointer feedback can regress into full-viewport repaint or layout translation if shared chrome adds animated background or transform rules.",
     "One-hour authoring behavior is verified, but a full one-hour MP4 performance render is not yet benchmarked."
   ],
-  "next_unlocked_capability": "Audit ANIMILL text-effect parity; accept a production change only when a reproducible break and cross-surface proof are both present."
+  "next_unlocked_capability": "Expand the production-safe text-effect set one named effect family at a time, starting with a fresh visual proof for animated treatments."
 }
