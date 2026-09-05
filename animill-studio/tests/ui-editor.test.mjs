@@ -184,6 +184,11 @@ test('editor keeps project, inspector, timeline, and viewer state in sync', {tim
   await page.goto(`${origin}/nana.html`, {waitUntil: 'networkidle0'});
   assert.match(await page.$eval('.brand', (node) => node.textContent), /NANA STORYWORLDS/);
   assert.equal(await page.$eval('#pointerInfo', (node) => node.getAttribute('aria-hidden')), 'true', 'NANA and ANIMILL must share the reticle information layer');
+  await page.click('#toggleStory');
+  assert.equal(await page.$eval('#workspace', (node) => node.classList.contains('storyHidden')), true, 'Story Engine must collapse from the shared panel control');
+  assert.equal(await page.$eval('.storyPane', (node) => getComputedStyle(node).display), 'none');
+  await page.click('#toggleStory');
+  assert.equal(await page.$eval('#workspace', (node) => node.classList.contains('storyHidden')), false, 'Story Engine must reopen without losing the workspace');
   await page.select('#themeSelect', 'mint');
   assert.equal(await page.$eval('body', (node) => node.dataset.theme), 'mint');
   const timelineBox = await page.$eval('#timeline', (node) => { const rect = node.getBoundingClientRect(); return {left: rect.left, top: rect.top, width: rect.width}; });

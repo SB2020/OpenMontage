@@ -35,7 +35,7 @@ npm start
 5. Send the plan to OpenMontage, which writes `nana-project.json`, `audio-beat-plan.json`, `provider-decisions.json`, and `animill-project.json` under the generated project workspace.
 6. Build the visual launch kit. NANA generates a production-safe ANIMILL project, navigates to ANIMILL, and ANIMILL consumes the handoff once.
 
-The transport shares ANIMILL's interaction grammar: play/pause from the current position, stop-to-zero, half-second stepping, loop state, click/drag timeline scrubbing, themed controls, and the shared reticle hover-information layer. Space toggles playback, the arrow keys step, `L` toggles looping, and Home stops.
+The transport shares ANIMILL's interaction grammar: a remembered Story Engine panel toggle, play/pause from the current position, stop-to-zero, half-second stepping, loop state, click/drag timeline scrubbing, themed controls, and the shared reticle hover-information layer. Space toggles playback, the arrow keys step, `L` toggles looping, and Home stops.
 
 The generated ANIMILL timeline stays inside the currently verified HyperFrames/Remotion compatibility envelope.
 
