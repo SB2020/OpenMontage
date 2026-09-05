@@ -14,6 +14,18 @@ none automatically becomes the product shell.
 
 `UNIFIED SYSTEM = valuable niche logic + ANIMILL interaction standards + spline adapter + shared state + cross-component benefit`
 
+The master repository list is not inspiration or a reading list. It is a
+finite capability-integration queue. Most repositories contribute working
+"nerves"—browsing, scraping, generation, editing, rendering, audio, automation,
+or distribution—which must terminate in ANIMILL's shared state and interaction
+standards.
+
+Competition folders such as Higgsfield, TapNow, Pine Drama, and similar niche
+collections are a different input class. Their genre, title, niche, prompt, and
+workflow maps feed domain intelligence into generators, presets, discovery,
+and validation. They are not automatically applications to embed or skins to
+copy.
+
 ## ANIMILL standards learned so far
 
 - Typography, palette tokens, panel depth, bevel geometry, spacing, and compact
@@ -50,6 +62,45 @@ none automatically becomes the product shell.
    or a hidden data field as integration.
 8. Record what the newly connected fragment gives other components and what it
    receives from them. Mutual benefit is the acceptance criterion for synergy.
+
+## Two intake contracts
+
+### Functional nerve
+
+A repository enters through a capability port, not as another standalone page.
+Its useful runtime is exercised first, then connected to shared ANIMILL inputs,
+outputs, state, progress, errors, provenance, and offline behavior. Existing
+HTML may be reused inside the app while the duplicate shell is removed.
+
+`NERVE SPLINE = proven function + ANIMILL port + canonical state + visible control + downstream consumer + fresh proof`
+
+### Intelligence pack
+
+A competition or niche folder enters through a knowledge port. Extract its
+taxonomies, workflow stages, constraints, prompt variables, genre/title
+patterns, and provider observations into attributable structured data. That
+data must power an existing decision, generator, preset, or check; merely
+displaying or summarizing the folder does not clear it.
+
+`INTELLIGENCE SPLINE = attributable domain map + normalized schema + named consumer + visible effect + provenance`
+
+## Clearance rule
+
+Every source in the master list must finish in one explicit terminal state:
+
+- **integrated:** connected to ANIMILL and freshly proven;
+- **absorbed:** its reusable data or logic now lives behind an existing shared
+  component;
+- **duplicate:** an already integrated component covers it, with the replacement
+  named;
+- **rejected:** unsafe, broken, legally unsuitable, or incapable of adding
+  distinct value, with evidence;
+- **parked:** deliberately deferred for a named dependency, not vague future
+  consideration.
+
+"Inspected," "mapped," "documented," and "reskinned" are intermediate states,
+not clearance. The queue shrinks only when a source reaches a terminal state
+and its ANIMILL consumer and proof are recorded.
 
 ## Verified implementation lessons
 

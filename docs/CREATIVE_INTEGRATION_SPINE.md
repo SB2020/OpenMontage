@@ -13,6 +13,12 @@ audio tools, and renderers are capability fragments to spline into that system.
 Their niche logic is preserved; none becomes a parallel product shell or owns
 the overall architecture.
 
+The initialization repository list is the functional integration queue, not a
+collection of product ideas. Competition/niche folders are knowledge inputs:
+their maps of genres, titles, prompts, workflows, and providers must be
+normalized and consumed by the connected system. See
+`docs/FRAGMENT_CLEARANCE_LEDGER.md` for the closure contract.
+
 ## Existing surfaces to preserve
 
 | Existing work | Current home | Integration responsibility |
@@ -49,9 +55,10 @@ pass:
 - **Verified:** existing AI/world/talking-head intake, editable media
   materialization, visible context, local repository media, and matched
   HyperFrames/Remotion output with audio.
-- **Next move:** select the next high-value E-drives fragment by the capability
-  it contributes, then repeat the spline contract without promoting that
-  fragment into the product center.
+- **Next move:** clear one complete acquire-to-generate-to-author lane from the
+  master repository list, using the smallest set of existing functional nerves
+  and one fresh proof. Record every used, duplicated, rejected, or dependency-
+  parked source so the queue only moves downward.
 
 Log new ANIMILL standards and reusable splining lessons in
 `docs/ANIMILL_SPLINING_SKILL_LOG.md` as integrations prove them.

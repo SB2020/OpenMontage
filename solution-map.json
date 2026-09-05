@@ -18,7 +18,8 @@
     "Preserve the existing ANIMILL workflow and user-created work.",
     "Keep HyperFrames and Remotion explicit; never silently substitute one for the other.",
     "Continue to support browser-local authoring and offline local rendering.",
-    "Treat OpenMontage and every imported repository as a capability fragment; ANIMILL standards and canonical state remain the integration center."
+    "Treat OpenMontage and every imported repository as a capability fragment; ANIMILL standards and canonical state remain the integration center.",
+    "Treat the initialization repository list as a finite clearance queue, while competition and niche folders enter as attributable intelligence packs rather than parallel product shells."
   ],
   "assumptions": [
     "The timeline is the source of truth for block visibility at the playhead.",
@@ -217,5 +218,5 @@
     "Pointer feedback can regress into full-viewport repaint or layout translation if shared chrome adds animated background or transform rules.",
     "One-hour authoring behavior is verified, but a full one-hour MP4 performance render is not yet benchmarked."
   ],
-  "next_unlocked_capability": "Run the final normal-layout creator pass and repair only user-visible editor defects; do not expand generators, providers, or effect families."
+  "next_unlocked_capability": "Clear the first complete acquire-to-generate-to-author lane from the master repository queue: prove existing functions before reskinning, connect only the smallest winning set to ANIMILL canonical state, and record every source as integrated, absorbed, duplicate, rejected, or dependency-parked."
 }
