@@ -181,13 +181,23 @@ test('editor keeps project, inspector, timeline, and viewer state in sync', {tim
   await page.click('#allowRuntimeDifferences');
   assert.equal(await page.$eval('#renderRemotion', (button) => button.disabled), false, 'explicit approval should unlock the selected production route');
 
+  await page.setViewport({width: 1000, height: 1000});
   await page.goto(`${origin}/nana.html`, {waitUntil: 'networkidle0'});
   assert.match(await page.$eval('.brand', (node) => node.textContent), /NANA STORYWORLDS/);
   assert.equal(await page.$eval('#pointerInfo', (node) => node.getAttribute('aria-hidden')), 'true', 'NANA and ANIMILL must share the reticle information layer');
+  const centerWidthBeforeCollapse = await page.$eval('.center', (node) => node.getBoundingClientRect().width);
   await page.click('#toggleStory');
+  await new Promise((resolve) => setTimeout(resolve, 300));
   assert.equal(await page.$eval('#workspace', (node) => node.classList.contains('storyHidden')), true, 'Story Engine must collapse from the shared panel control');
   assert.equal(await page.$eval('.storyPane', (node) => getComputedStyle(node).display), 'none');
+  const collapsedWidths = await page.evaluate(() => ({
+    center: document.querySelector('.center').getBoundingClientRect().width,
+    workspace: document.querySelector('#workspace').getBoundingClientRect().width,
+  }));
+  assert.ok(collapsedWidths.center > centerWidthBeforeCollapse + 150, 'the sonic timeline must consume the width released by Story Engine');
+  assert.ok(Math.abs(collapsedWidths.center - collapsedWidths.workspace) < 2, 'the collapsed responsive timeline must span the workspace');
   await page.click('#toggleStory');
+  await new Promise((resolve) => setTimeout(resolve, 300));
   assert.equal(await page.$eval('#workspace', (node) => node.classList.contains('storyHidden')), false, 'Story Engine must reopen without losing the workspace');
   await page.select('#themeSelect', 'mint');
   assert.equal(await page.$eval('body', (node) => node.dataset.theme), 'mint');
