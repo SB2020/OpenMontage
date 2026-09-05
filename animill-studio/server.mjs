@@ -36,6 +36,9 @@ function prepareNanaStudioHtml(source) {
   html = html.replace('<div id="ace-history" style="display:flex;flex-direction:column;gap:6px;">', '<div id="ace-history" style="display:flex;flex-direction:column;gap:6px;"><div class="muted" style="font-size:9px;padding:8px 0;">No completed local jobs yet. History appears only after a real WAN2GP result.</div>');
   html = html.replace('      <!-- Output preview -->', '      <!-- Output preview · moved to top by ANIMILL adapter -->');
   html = html.replace('<div id="gen-output-actions" style="display:none;padding:10px 12px;border-top:1px solid var(--border);display:none;gap:6px;flex-wrap:wrap;">', '<div id="gen-output-actions" style="display:none;padding:10px 12px;border-top:1px solid var(--border);gap:6px;flex-wrap:wrap;">');
+  html = html.replace(/\s*<div class="tnav-item" onclick="navScrollTo\('tool-(?:music|prompts|project|wangp)'\)">[^<]*<\/div>/g, '');
+  html = html.replace('  window.NANA_TOOLS = NANA_TOOLS;', "  window.NANA_TOOLS = NANA_TOOLS.filter(function (t) { return ['project','music','wangp','prompts'].indexOf(t.id) < 0; });");
+  html = html.replace('  NANA_TOOLS.forEach(function (t) {', '  window.NANA_TOOLS.forEach(function (t) {');
   const audFileStart = html.indexOf('function loadAudacityFile(input) {');
   const audOpenStart = html.indexOf('function audOpenTrack(', audFileStart);
   if (audFileStart >= 0 && audOpenStart > audFileStart) {
