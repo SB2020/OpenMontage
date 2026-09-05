@@ -26,21 +26,21 @@ function motion(block: Block, frame: number, fps: number) {
   const eased = 1 - Math.pow(1 - p, 3);
   const state = {x: 0, y: 0, scale: 1, opacity: Number(block.opacity ?? 1), rotateX: 0, rotateY: 0, rotate: Number(block.rotation || 0), blur: 0};
   switch (block.motion) {
-    case 'fade-up': state.y = (1 - eased) * 48; state.opacity *= eased; break;
-    case 'fade-down': state.y = (1 - eased) * -48; state.opacity *= eased; break;
-    case 'fade-in-big': state.y = (1 - eased) * 200; state.opacity *= eased; break;
-    case 'slide-left': state.x = (1 - eased) * -80; state.opacity *= eased; break;
-    case 'slide-right': state.x = (1 - eased) * 80; state.opacity *= eased; break;
-    case 'scale-in': state.scale = 0.84 + eased * 0.16; state.opacity *= eased; break;
-    case 'snap-pop': state.scale = 0.5 + eased * 0.5; state.opacity *= Math.min(1, eased * 2); break;
-    case 'hero-strike': state.scale = 0.92 + eased * 0.08; state.y = (1 - eased) * 22; state.opacity *= eased; break;
-    case 'mask-wipe': state.x = (1 - eased) * -32; state.opacity *= eased; break;
-    case 'blur-rise': state.y = (1 - eased) * 70; state.blur = (1 - eased) * 16; state.opacity *= eased; break;
-    case 'drop-in': state.y = (1 - eased) * -160; state.opacity *= Math.min(1, eased * 3); break;
-    case 'rise-fade': state.y = (1 - eased) * 120; state.opacity *= eased; break;
-    case 'flip-in-x': state.rotateX = (1 - eased) * -90; state.opacity *= eased; break;
-    case 'flip-in-y': state.rotateY = (1 - eased) * -90; state.opacity *= eased; break;
-    case 'rotate-in': state.rotate = Number(block.rotation || 0) + (1 - eased) * -45; state.scale = 0.85 + eased * 0.15; state.opacity *= eased; break;
+    case 'fade-up': state.y = (1 - eased) * 54; state.opacity *= eased; break;
+    case 'fade-down': state.y = (1 - eased) * -54; state.opacity *= eased; break;
+    case 'fade-in-big': state.y = (1 - eased) * 220; state.opacity *= eased; break;
+    case 'slide-left': state.x = (1 - eased) * -90; state.opacity *= eased; break;
+    case 'slide-right': state.x = (1 - eased) * 90; state.opacity *= eased; break;
+    case 'scale-in': state.scale = 0.8 + eased * 0.2; state.opacity *= eased; break;
+    case 'snap-pop': state.scale = 0.8 + eased * 0.2; state.opacity *= Math.min(1, eased * 4); break;
+    case 'hero-strike': state.scale = 0.9 + eased * 0.1; state.y = (1 - eased) * 26; state.opacity *= eased; break;
+    case 'mask-wipe': state.x = (1 - eased) * -40; state.opacity *= eased; break;
+    case 'blur-rise': state.y = (1 - eased) * 80; state.blur = (1 - eased) * 10; state.opacity *= eased; break;
+    case 'drop-in': state.y = (1 - eased) * -180; state.opacity *= Math.min(1, eased * 3); break;
+    case 'rise-fade': state.y = (1 - eased) * 130; state.opacity *= eased; break;
+    case 'flip-in-x': state.rotateX = (1 - eased) * 90; state.opacity *= eased; break;
+    case 'flip-in-y': state.rotateY = (1 - eased) * 90; state.opacity *= eased; break;
+    case 'rotate-in': state.rotate = Number(block.rotation || 0) + (1 - eased) * -220; state.scale = 0.6 + eased * 0.4; state.opacity *= eased; break;
   }
   return state;
 }

@@ -38,6 +38,14 @@ test('HyperFrames exporter explicitly declares intentional 3D entrance overlap',
   assert.match(toHyperframesHtml(project), /data-layout-allow-occlusion/);
 });
 
+test('HyperFrames uses ANIMILL entrance transform endpoints', () => {
+  const project = freshProject();
+  project.scenes[0].blocks[0].motion = 'rotate-in';
+  const html = toHyperframesHtml(project);
+  assert.match(html, /-220/);
+  assert.match(html, /\"scale\":0\.6/);
+});
+
 test('HyperFrames exporter preserves the production-safe chrome edge effect', () => {
   const project = freshProject();
   project.scenes[0].blocks[0].effect = 'chrome-edge';
@@ -53,7 +61,7 @@ test('HyperFrames entrance tweens preserve authored rotation and scale', () => {
   project.scenes[0].blocks[0].scale = 1.35;
   const html = toHyperframesHtml(project);
   assert.match(html, /scale:1\.35,rotation:27/, 'the tween target must retain authored transform values');
-  assert.match(html, /\"y\":48/, 'the entrance offset must remain intact');
+  assert.match(html, /\"y\":54/, 'the entrance offset must remain intact');
 });
 
 test('Renderer preflight rejects browser-only blob assets', () => {

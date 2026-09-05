@@ -15,21 +15,21 @@ const backgrounds = {
 
 function motionFrom(block) {
   switch (block.motion) {
-    case 'fade-up': return {opacity: 0, y: 48};
-    case 'fade-down': return {opacity: 0, y: -48};
-    case 'fade-in-big': return {opacity: 0, y: 200};
-    case 'slide-left': return {opacity: 0, x: -80};
-    case 'slide-right': return {opacity: 0, x: 80};
-    case 'scale-in': return {opacity: 0, scale: 0.84};
-    case 'snap-pop': return {opacity: 0, scale: 0.5};
-    case 'hero-strike': return {opacity: 0, scale: 0.92, y: 22};
-    case 'mask-wipe': return {opacity: 0, x: -32};
-    case 'blur-rise': return {opacity: 0, y: 70, filter: 'blur(16px)'};
-    case 'drop-in': return {opacity: 0, y: -160};
-    case 'rise-fade': return {opacity: 0, y: 120};
-    case 'flip-in-x': return {opacity: 0, rotationX: -90};
-    case 'flip-in-y': return {opacity: 0, rotationY: -90};
-    case 'rotate-in': return {opacity: 0, rotation: -45, scale: 0.85};
+    case 'fade-up': return {opacity: 0, y: 54};
+    case 'fade-down': return {opacity: 0, y: -54};
+    case 'fade-in-big': return {opacity: 0, y: 220};
+    case 'slide-left': return {opacity: 0, x: -90};
+    case 'slide-right': return {opacity: 0, x: 90};
+    case 'scale-in': return {opacity: 0, scale: 0.8};
+    case 'snap-pop': return {opacity: 0, scale: 0.8};
+    case 'hero-strike': return {opacity: 0, scale: 0.9, y: 26};
+    case 'mask-wipe': return {opacity: 0, x: -40};
+    case 'blur-rise': return {opacity: 0, y: 80, filter: 'blur(10px)'};
+    case 'drop-in': return {opacity: 0, y: -180};
+    case 'rise-fade': return {opacity: 0, y: 130};
+    case 'flip-in-x': return {opacity: 0, rotationX: 90};
+    case 'flip-in-y': return {opacity: 0, rotationY: 90};
+    case 'rotate-in': return {opacity: 0, rotation: -220, scale: 0.6};
     default: return null;
   }
 }
