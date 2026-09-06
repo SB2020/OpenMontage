@@ -14,7 +14,33 @@
       if(!text&&el.matches('button,.archetype'))text=el.textContent;
       return String(text||'').replace(/\s+/g,' ').trim();
     };
-    window.addEventListener('pointermove',event=>{document.documentElement.style.setProperty('--mx',event.clientX+'px');document.documentElement.style.setProperty('--my',event.clientY+'px')},{passive:true});
+    // Name dynamically rebuilt inspector/beat fields without replacing their controls.
+    function labelFields(){
+      document.querySelectorAll('input,select,textarea').forEach(el=>{
+        if(el.getAttribute('aria-label')||el.getAttribute('aria-labelledby')||el.labels?.length)return;
+        const field=el.closest('.field')||(el.closest('.beat')?el.parentElement:null);
+        const label=field?.querySelector('label')?.textContent?.trim();
+        if(label)el.setAttribute('aria-label',label);
+      });
+    }
+    labelFields();
+    let labelsPending=false;
+    new MutationObserver(records=>{
+      if(!records.some(record=>Array.from(record.addedNodes).some(node=>node.nodeType===1&&(node.matches('input,select,textarea')||node.querySelector('input,select,textarea')))))return;
+      if(labelsPending)return;
+      labelsPending=true;
+      requestAnimationFrame(()=>{labelsPending=false;labelFields()});
+    }).observe(document.body,{childList:true,subtree:true});
+    let pointerFrame=0,pointX=0,pointY=0;
+    window.addEventListener('pointermove',event=>{
+      pointX=event.clientX;pointY=event.clientY;
+      if(pointerFrame)return;
+      pointerFrame=requestAnimationFrame(()=>{
+        document.documentElement.style.setProperty('--mx',pointX+'px');
+        document.documentElement.style.setProperty('--my',pointY+'px');
+        pointerFrame=0;
+      });
+    },{passive:true});
     window.addEventListener('pointerover',event=>{let el=event.target.closest&&event.target.closest(hot);if(!el)return;el.dataset.animillHover=el.matches('input,select,textarea,.beat')?'field':'action';let text=describe(el);document.body.classList.add('hot');if(text){label.textContent=text;info.classList.add('show')}});
     window.addEventListener('pointerout',event=>{let from=event.target.closest&&event.target.closest(hot),to=event.relatedTarget?.closest&&event.relatedTarget.closest(hot);if(from===to)return;if(!to){document.body.classList.remove('hot');info.classList.remove('show')}});
   }

@@ -21,7 +21,9 @@ const jobs = new Map();
 const openMontageRoot = path.resolve(root, '..');
 const nanaStudioSource = 'E:\\e-drives\\nana_master_suite.html';
 function prepareNanaStudioHtml(source, animillTheme) {
-  let html = source;
+  let html = source
+    .replace('SELECT 15s LIP SYNC WINDOW', 'AUDIO SELECTION')
+    .replace('Native — runs on your machine via the NANA backend (isolated Python 3.11 + your RTX 2060). No external server, no subscription.', 'Uses a local NANA backend with Wav2Lip installed. Availability is checked below; no cloud generation is implied.');
   const findClosingDiv = function (value, start) {
     let depth = 0;
     const tags = /<\/?div\b[^>]*>/gi;
@@ -59,6 +61,7 @@ function prepareNanaStudioHtml(source, animillTheme) {
       ['// ── ACE-STEP ──', '// ── VIDEO FEED ──'],
       ['// ── VIDEO FEED ──', '// ── MINIMIZE / TOGGLE ──'],
       ['// ── CONTENT INGESTION ──', '// ── TOPBAR NAV ACTIVE ON SCROLL ──'],
+      ['// ── TOPBAR NAV ACTIVE ON SCROLL ──', '// Smooth scroll to section'],
       ['// Auto-prompt generator', '</script>']
     ].forEach(function (range) { scripts = stripRuntimeBetween(scripts, range[0], range[1]); });
     scripts = scripts.replace(/engine: 'syncso'/g, "engine: 'veo3fast'");
@@ -66,8 +69,7 @@ function prepareNanaStudioHtml(source, animillTheme) {
     scripts = scripts.replace(/\s*var engineDesc = document\.getElementById\('engine-desc'\);\s*/g, '\n');
     scripts = scripts.replace(/\s*var descs = \{[\s\S]*?\n  \};\s*var desc = document\.getElementById\('engine-desc'\);\s*if \(desc\) desc\.textContent = descs\[eng\] \|\| '';\s*/g, '\n');
     scripts = scripts.replace(/\s*addToVideoFeed\(job\);/g, '');
-    scripts = scripts.replace(/if \(false\) \{  \/\/ lipsync-full removed — all engines native\r?\n[\s\S]*?\r?\n    \} else \{\r?\n([\s\S]*?)\r?\n    \}/g, '$1');
-    scripts = scripts.replace(/\s*if \(false\) \{  \/\/ lipsync-full removed — all engines native\r?\n[\s\S]*?\r?\n      \}\s*/g, '\n');
+    scripts = scripts.replace(/^\s*(?:apiCheckAuth|refreshVeoAuthBanner)\(\);/gm, '');
     scripts = scripts.replace(/lipsync-full/g, 'native-lipsync');
     scripts = scripts.replace(/\(eng === 'native-lipsync'\) \? 'GENERATE — FULL LIPSYNC' : 'GENERATE'/g, "'GENERATE'");
     const styleEnd = topbar.indexOf('</style>');
@@ -153,6 +155,17 @@ function prepareNanaStudioHtml(source, animillTheme) {
   if (costStart >= 0 && loadImageStart > costStart) {
     html = html.slice(0, costStart) + 'function updateGenCost() {}\n\n' + html.slice(loadImageStart);
   }
+  // Remove complete, bounded legacy functions; never match across nested braces.
+  [
+    ['function runGenerator_DEMO_DISABLED()', 'function regenerateClip()'],
+    ['function addToTimeline()', 'function exportClip()'],
+    ['function importSuno()', 'function resetPromptToDefault()'],
+    ['function sectionAction(', '// Smooth scroll to section']
+  ].forEach(function ([startMarker, endMarker]) {
+    const start = html.indexOf(startMarker);
+    const end = html.indexOf(endMarker, start + startMarker.length);
+    if (start >= 0 && end > start) html = html.slice(0, start) + html.slice(end);
+  });
   html = html.replace('  window.NANA_TOOLS = NANA_TOOLS.filter(function (t) { return [\'project\',\'music\',\'wangp\',\'prompts\'].indexOf(t.id) < 0; });', '  window.NANA_TOOLS = NANA_TOOLS;');
   const audFileStart = html.indexOf('function loadAudacityFile(input) {');
   const audOpenStart = html.indexOf('function audOpenTrack(', audFileStart);
@@ -243,21 +256,6 @@ function audExportToLibrary() {
     }, { passive: true });
     paintCursor();
   }
-  var aceWave = document.getElementById('ace-waveform');
-  var acePlay = document.getElementById('ace-play-btn');
-  if (aceWave) {
-    aceWave.removeAttribute('onclick');
-    aceWave.style.cursor = 'default';
-    aceWave.setAttribute('aria-label', 'No completed local WAN2GP output');
-  }
-  if (acePlay) {
-    acePlay.removeAttribute('onclick');
-    acePlay.setAttribute('aria-disabled', 'true');
-    acePlay.style.opacity = '0.45';
-    acePlay.onclick = function () { notify('Generate a real WAN2GP job before playback is available.'); };
-  }
-  var aceLabel = document.getElementById('ace-waveform-label');
-  if (aceLabel) aceLabel.textContent = 'NO COMPLETED LOCAL OUTPUT';
   var generatorBody = document.getElementById('generator-body');
   var settingsMenu = document.querySelector('.nana-settings-menu');
   if (generatorBody && settingsMenu) {
@@ -312,7 +310,7 @@ function audExportToLibrary() {
   }
 })();
 </script>`;
-  html = html.replace('</body>', honestScript + '\n</body>');
+  html = html.replace('</body>', honestScript + '\n<script src="/nana-operational.js"></script>\n</body>');
   return html;
 }
 const localAssetBase = () => `http://127.0.0.1:${port}`;
@@ -389,7 +387,7 @@ async function runtimeStatus() {
     try { status.hyperframes.version = (await runTool('hyperframes', ['--version'], root)).trim().split(/\s+/).at(-1); } catch {}
   }
   if (status.remotion.installed) {
-    try { status.remotion.version = (await runTool('remotion', ['--version'], root)).trim().split(/\s+/).at(-1); } catch {}
+    try { status.remotion.version = JSON.parse(await readFile(path.join(root, 'node_modules', '@remotion', 'cli', 'package.json'), 'utf8')).version; } catch {}
   }
   return status;
 }

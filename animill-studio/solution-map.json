@@ -1,0 +1,25 @@
+{
+  "schema_version": 2,
+  "goal": "Operational existing ANIMILL surfaces before adding repository or HTML fragments",
+  "definition_of_done": ["Real input reaches editable state and an actual output", "Unavailable providers are honest", "Shared controls remain accessible and theme-aligned", "Remaining failures are recorded with evidence"],
+  "non_goals": ["New integrations", "Paid generation", "Installing an unverified replacement backend"],
+  "constraints": ["Preserve source archives and user projects", "ANIMILL owns UI standards"],
+  "assumptions": ["Repo master list is future integration context"],
+  "unknowns": ["Location of compatible NANA/Wav2Lip backend", "Full disconnected-network rendering and font parity"],
+  "problem_formulations": [
+    {"id":"forward","question":"Can fresh input traverse the current interfaces?","operator":"forward-causal","exposes":["Broken handlers and handoffs"],"hides":["Unexercised controls"],"assumptions":[]},
+    {"id":"backward","question":"What must exist before output is real?","operator":"outcome-backward","exposes":["Renderers, backend routes, models"],"hides":["UX friction"],"assumptions":[]},
+    {"id":"inverse","question":"What creates misleading operational claims?","operator":"inverse-failure","exposes":["Fake actions, static status badges, syntax-destroying cleanup"],"hides":["Future integration opportunities"],"assumptions":[]}
+  ],
+  "solution_vectors": [{"id":"repair-existing","from_formulations":["forward","backward","inverse"],"path":["inputs","local-output","provider-output","parity"],"decisive_evidence":["Fresh UI input and inspected video files"],"cost_risk":["External backend absence limits completion"]}],
+  "solution_equation": "Operational app = working inputs + connected handoffs + real output + honest capability gates + UI/accessibility consistency",
+  "modules": [
+    {"id":"inputs","outcome":"NANA input runtime and editor boundaries work","inputs":["Existing source suite"],"outputs":["nana-operational.js and bounded adapter repair"],"depends_on":[],"interface_contract":["No fabricated media or provider completion"],"acceptance":["Fresh image/audio decode, editable one-hour timeline, Worlds handoff"],"fallback":["Unavailable actions explain prerequisites"],"status":"verified","evidence":["OPERATIONAL-PASS.md browser evidence", "tests/nana-runtime.test.mjs"]},
+    {"id":"local-output","outcome":"Both installed render engines produce real short videos","inputs":["Fresh one-second project"],"outputs":["Two inspected 1080p24 MP4 files"],"depends_on":["inputs"],"interface_contract":["Output file required, not a status badge"],"acceptance":["ffprobe confirms 24 frames; visual inspection confirms title"],"fallback":["Keep working engine available if the other fails"],"status":"verified","evidence":["Render job IDs and frame inspection in OPERATIONAL-PASS.md"]},
+    {"id":"provider-output","outcome":"NANA and Wav2Lip generate and transfer real clips","inputs":["Compatible local backend and models"],"outputs":["Generated clip in top preview and ANIMILL timeline"],"depends_on":["inputs"],"interface_contract":["Require real /api/lipsync and completed job"],"acceptance":["Fresh image/audio produce playable lip-synced video"],"fallback":["Offline input editing remains usable"],"status":"blocked","evidence":["No port 8000 listener; discovered server scripts lack lipsync route"]},
+    {"id":"parity","outcome":"Consistent typography and offline rendering guarantees","inputs":["Shared licensed local fonts"],"outputs":["Font-consistent engine renders"],"depends_on":["local-output"],"interface_contract":["Do not claim pixel parity from job completion"],"acceptance":["Same font metrics and disconnected-network render"],"fallback":["Document differences explicitly"],"status":"pending","evidence":["Inspected frames currently differ in text width"]}
+  ],
+  "integration_checks": ["Worlds edit to ANIMILL timeline passed", "Both render APIs to actual MP4 passed", "Provider clip to ANIMILL remains unverified"],
+  "risks": ["External NANA source must remain available", "Font fallback differs across engines", "No exhaustive accessibility or long-render certification"],
+  "next_unlocked_capability": "Connect the actual local NANA backend, then verify one generated clip through preview and timeline before adding fragments"
+}
