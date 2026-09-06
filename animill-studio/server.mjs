@@ -275,11 +275,39 @@ function audExportToLibrary() {
   }
   if (lipsyncBody) {
     lipsyncBody.classList.add('minimized');
-    var lipsyncToggle = lipsyncBody.previousElementSibling && lipsyncBody.previousElementSibling.querySelector('.minimize-btn');
-    if (lipsyncToggle) {
-      lipsyncToggle.innerHTML = '&#43;';
-      lipsyncToggle.setAttribute('aria-label', 'Expand Wav2Lip Lip-Sync');
-      lipsyncToggle.title = 'Expand';
+    var lipsyncHead = lipsyncBody.previousElementSibling;
+    if (lipsyncHead) {
+      // The archived toggleSection runtime is absent from this focused page.
+      // Bind the whole heading locally and use a native keyboard-operable button.
+      var lipsyncToggle = document.createElement('button');
+      lipsyncToggle.type = 'button';
+      lipsyncToggle.className = lipsyncHead.className;
+      lipsyncToggle.innerHTML = lipsyncHead.innerHTML;
+      lipsyncToggle.querySelectorAll('[onclick]').forEach(function (node) {
+        node.removeAttribute('onclick');
+      });
+      lipsyncToggle.querySelectorAll('div').forEach(function (node) {
+        var span = document.createElement('span');
+        Array.from(node.attributes).forEach(function (attr) { span.setAttribute(attr.name, attr.value); });
+        while (node.firstChild) span.appendChild(node.firstChild);
+        node.replaceWith(span);
+      });
+      lipsyncToggle.setAttribute('aria-controls', lipsyncBody.id);
+      lipsyncToggle.setAttribute('aria-expanded', 'false');
+      lipsyncToggle.setAttribute('aria-label', 'Wav2Lip Lip-Sync');
+      var toggleGlyph = lipsyncToggle.querySelector('.minimize-btn');
+      if (toggleGlyph) {
+        toggleGlyph.removeAttribute('aria-label');
+        toggleGlyph.removeAttribute('title');
+        toggleGlyph.setAttribute('aria-hidden', 'true');
+        toggleGlyph.textContent = '+';
+      }
+      lipsyncToggle.addEventListener('click', function () {
+        var collapsed = lipsyncBody.classList.toggle('minimized');
+        lipsyncToggle.setAttribute('aria-expanded', String(!collapsed));
+        if (toggleGlyph) toggleGlyph.textContent = collapsed ? '+' : '−';
+      });
+      lipsyncHead.replaceWith(lipsyncToggle);
     }
   }
 })();

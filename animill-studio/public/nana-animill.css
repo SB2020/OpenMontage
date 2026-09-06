@@ -62,7 +62,7 @@ body { background:var(--bg); color:var(--ink); cursor:none; }
 .nana-settings-content { padding:0 12px 12px; }
 #tool-lipsync { margin:0 !important; padding:0 !important; }
 #tool-lipsync > .section-head {
-  min-height:36px; margin:0; padding:8px 12px;
+  display:flex; width:100%; text-align:left; min-height:36px; margin:0; padding:8px 12px;
   border:1px solid var(--line); background:var(--surface); clip-path:var(--bevelSm);
 }
 #tool-lipsync > .section-head .section-title { font:900 11px var(--font-body); letter-spacing:.13em; }
