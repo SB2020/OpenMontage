@@ -63,12 +63,18 @@ function prepareNanaStudioHtml(source) {
   html = html.replace(/\s*<div class="tnav-item" onclick="location\.href='\/production'">QUICK VIDEO<\/div>/, '');
   const outputStart = html.indexOf('      <!-- Output preview -->');
   const queueStart = html.indexOf('      <!-- Generation queue -->', outputStart);
-  const gridStart = html.indexOf('  <div class="generator-grid"');
-  if (outputStart >= 0 && queueStart > outputStart && gridStart >= 0 && gridStart < outputStart) {
+  const generatorBodyStart = html.indexOf('<div class="section-body" id="generator-body">');
+  if (outputStart >= 0 && queueStart > outputStart && generatorBodyStart >= 0) {
     const output = html.slice(outputStart, queueStart).replace('class="card" style="padding:0;overflow:hidden;"', 'class="card nana-output-top-card" style="padding:0;overflow:hidden;"');
     html = html.slice(0, outputStart) + html.slice(queueStart);
-    const insertAt = html.indexOf('  <div class="generator-grid"');
-    html = html.slice(0, insertAt) + '  <!-- ANIMILL adapter: output stays above generation inputs for review-first authoring. -->\n' + output + html.slice(insertAt);
+    const bodyOpenEnd = html.indexOf('>', generatorBodyStart) + 1;
+    const outputChunk = '\n  <!-- ANIMILL adapter: output stays first; settings are opt-in. -->\n' + output;
+    html = html.slice(0, bodyOpenEnd) + outputChunk + html.slice(bodyOpenEnd);
+    const controlsStart = bodyOpenEnd + outputChunk.length;
+    const bodyEnd = findClosingDiv(html, generatorBodyStart);
+    if (bodyEnd > controlsStart) {
+      html = html.slice(0, controlsStart) + '\n  <details class="nana-settings-menu"><summary>SETTINGS</summary><div class="nana-settings-content">\n' + html.slice(controlsStart, bodyEnd) + '\n</div></details>\n' + html.slice(bodyEnd);
+    }
   }
   html = html.replace('        <!-- Mock waveform display -->', '        <!-- Real waveform appears only after a completed local job. -->');
   html = html.replace(/\s*<div style="padding:8px 10px;background:var\(--surface2\);border:1px solid var\(--border\);border-radius:var\(--r-sm\);display:flex;align-items:center;gap:8px;">\s*<div style="flex:1;">\s*<div style="font-size:11px;font-weight:500;">(?:dark_trap_seraph_v1|hellfire_interlude_draft)\.wav<\/div>[\s\S]*?<\/div>\s*<\/div>/g, '');
@@ -77,6 +83,7 @@ function prepareNanaStudioHtml(source) {
   html = html.replace('<div id="gen-output-actions" style="display:none;padding:10px 12px;border-top:1px solid var(--border);display:none;gap:6px;flex-wrap:wrap;">', '<div id="gen-output-actions" style="display:none;padding:10px 12px;border-top:1px solid var(--border);gap:6px;flex-wrap:wrap;">');
   html = html.replace(/\s*<!-- Cost estimate -->[\s\S]*?<\/div>\s*\n\s*<!-- GENERATE BUTTON -->/, '\n      <!-- GENERATE BUTTON -->');
   html = html.replace(/\s*<div style="margin-top:8px;font-size:9px;color:var\(--muted\);font-family:var\(--font-mono\);padding:6px;background:var\(--surface2\);border-radius:var\(--r-sm\);" id="engine-desc">[\s\S]*?<\/div>/, '');
+  html = html.replace('</style>', '.nana-output-top-card { width:100%; margin:0 0 14px; } .nana-output-top-card #gen-output-area { aspect-ratio:auto !important; min-height:calc(100vh - 92px); max-height:none !important; } .nana-settings-menu { margin:0 0 18px; border:1px solid var(--border); background:var(--surface); } .nana-settings-menu > summary { cursor:pointer; list-style:none; padding:10px 12px; font:10px var(--font-mono); letter-spacing:2px; color:var(--muted); } .nana-settings-menu > summary::-webkit-details-marker { display:none; } .nana-settings-menu > summary::after { content:"+"; float:right; color:var(--accent); } .nana-settings-menu[open] > summary::after { content:"−"; } .nana-settings-content { padding:0 12px 12px; } .generator-body.settings-open .nana-output-top-card #gen-output-area { min-height:320px; max-height:60vh !important; } </style>');
   html = html.replace(/\s*<div class="tnav-item" onclick="navScrollTo\('tool-(?:music|prompts|project|wangp)'\)">[^<]*<\/div>/g, '');
   html = html.replace(/\s*<div class="tnav-item" id="archive-toggle" onclick="toggleArchiveView\(\)">ARCHIVE<\/div>/, '');
   const toolsStart = html.indexOf('  const NANA_TOOLS = [');
@@ -190,6 +197,9 @@ function audExportToLibrary() {
   }
   var aceLabel = document.getElementById('ace-waveform-label');
   if (aceLabel) aceLabel.textContent = 'NO COMPLETED LOCAL OUTPUT';
+  var generatorBody = document.getElementById('generator-body');
+  var settingsMenu = document.querySelector('.nana-settings-menu');
+  if (generatorBody && settingsMenu) settingsMenu.addEventListener('toggle', function () { generatorBody.classList.toggle('settings-open', settingsMenu.open); });
   var aud = document.getElementById('audioeditor');
   if (aud) {
     var offline = document.getElementById('aud-offline-banner');
