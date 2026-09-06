@@ -1,0 +1,113 @@
+/* NANA layout adapter. Colors/background/buttons come from animill.html at serve time. */
+:root {
+  --surface:rgba(255,255,255,.026);
+  --surface2:rgba(255,255,255,.045);
+  --surface3:rgba(255,255,255,.07);
+  --border:var(--line);
+  --border-hi:var(--line2);
+  --text:var(--ink);
+  --accent:var(--gold);
+  --accent2:var(--ink);
+  --green:var(--mint);
+  --blue:var(--cyan);
+  --amber:var(--gold);
+  --red:var(--bad);
+  --dim:var(--muted);
+  --font-body:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-hud:var(--font-body);
+  --font-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --r:0px;
+  --r-sm:0px;
+}
+body { background:var(--bg); color:var(--ink); cursor:none; }
+.layout { position:relative; z-index:1; padding:0 !important; background:transparent; }
+.main { padding:0 10px 10px !important; background:transparent; }
+#generator, #generator-body { margin:0; padding:0; }
+.animill-nana-cursor {
+  position:fixed; left:0; top:0; pointer-events:none; z-index:100001;
+  transform:translate3d(var(--mx),var(--my),0);
+}
+/* No orbit ring, mouse spotlight, header banner, or frame around the output. */
+.nana-output-top-card {
+  position:relative; width:100%; margin:0 0 8px;
+  border:0 !important; background:transparent; box-shadow:none;
+  border-radius:0; clip-path:none;
+}
+.nana-output-top-card > div:first-child {
+  background:transparent !important; border:0 !important;
+  padding:10px 0 !important; min-height:34px;
+}
+.nana-output-top-card #gen-output-area {
+  aspect-ratio:auto !important; min-height:calc(100dvh - 150px);
+  max-height:none !important; background:transparent !important;
+  border:0; box-shadow:none; clip-path:none;
+}
+#generator-body.settings-open .nana-output-top-card #gen-output-area {
+  min-height:240px; height:38dvh; max-height:420px !important;
+}
+#gen-output-idle > div:first-child { color:var(--gold) !important; opacity:.7; }
+#gen-output-idle > div:last-child { color:var(--muted) !important; }
+#gen-output-done video { max-width:100%; max-height:calc(100dvh - 150px); object-fit:contain; }
+.nana-settings-menu {
+  position:relative; margin:0 0 8px; border:1px solid var(--line);
+  background:var(--surface); clip-path:var(--bevelSm);
+}
+.nana-settings-menu > summary {
+  display:flex; align-items:center; min-height:36px; padding:8px 12px;
+  list-style:none; font:900 11px var(--font-body); letter-spacing:.13em; color:var(--ink);
+}
+.nana-settings-menu > summary::-webkit-details-marker { display:none; }
+.nana-settings-menu > summary::after { content:"+"; margin-left:auto; color:var(--gold); }
+.nana-settings-menu[open] > summary::after { content:"−"; }
+.nana-settings-content { padding:0 12px 12px; }
+#tool-lipsync { margin:0 !important; padding:0 !important; }
+#tool-lipsync > .section-head {
+  min-height:36px; margin:0; padding:8px 12px;
+  border:1px solid var(--line); background:var(--surface); clip-path:var(--bevelSm);
+}
+#tool-lipsync > .section-head .section-title { font:900 11px var(--font-body); letter-spacing:.13em; }
+#tool-lipsync > .section-body { margin:0; padding:12px; background:var(--surface); clip-path:var(--bevelSm); }
+#tool-lipsync > .section-body.minimized { display:none; }
+.layout .card {
+  border-radius:0; clip-path:var(--bevelSm); border-color:var(--line);
+  background:linear-gradient(180deg,rgba(255,255,255,.072),rgba(255,255,255,.026));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07),inset 0 0 26px rgba(0,0,0,.30);
+}
+.layout .nana-output-top-card { background:transparent; box-shadow:none; clip-path:none; }
+.card-title { color:var(--ink); font:900 11px var(--font-body); letter-spacing:.13em; }
+.btn,.toolbar-btn,.pill,.gen-mode-btn,.engine-tile,.minimize-btn,.card-badge {
+  border-radius:0 !important;
+  clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);
+  border-color:var(--line); color:var(--ink);
+}
+.btn-primary,.pill.active,.gen-mode-btn.active,.engine-tile.active {
+  color:var(--ink); border-color:var(--gold);
+  background:linear-gradient(135deg,rgba(242,201,104,.36),rgba(118,255,195,.10));
+}
+/* Standard-size actions, using the exact button rule extracted from ANIMILL. */
+#gen-btn,#veo-auth-btn {
+  display:inline-flex; align-items:center; justify-content:center;
+  flex:0 0 auto; align-self:flex-start; width:auto; min-height:34px;
+  font-family:var(--font-body); line-height:1.25; border-radius:0;
+}
+#gen-btn { margin-top:6px; }
+#veo-auth-banner { background:var(--surface2) !important; clip-path:var(--bevelSm); flex-wrap:wrap; }
+#veo-auth-dot { box-shadow:none; }
+.input,textarea,select,input:not([type=range]):not([type=checkbox]) {
+  border-radius:0 !important; clip-path:var(--bevelSm);
+  color:var(--ink); border-color:var(--line); background:rgba(0,0,0,.24);
+}
+input[type=range] { accent-color:var(--gold); }
+.layout :is(button,.btn,.toolbar-btn,.pill,.gen-mode-btn,.engine-tile):hover {
+  transform:none; border-color:var(--gold); filter:brightness(1.1);
+}
+.layout :is(button,.btn,summary,input,textarea,select) { cursor:none; }
+.layout :focus-visible { outline:2px solid var(--mint); outline-offset:2px; }
+@media (pointer:coarse) {
+  body,.layout :is(button,.btn,summary,input,textarea,select) { cursor:auto; }
+  .animill-nana-cursor { display:none; }
+}
+@media (max-width:640px) {
+  .main { padding-inline:8px !important; }
+  .nana-settings-content { padding-inline:8px; }
+}
