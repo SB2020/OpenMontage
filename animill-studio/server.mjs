@@ -53,6 +53,11 @@ function prepareNanaStudioHtml(source) {
   if (topbarRightStart >= 0 && topbarRightEnd > topbarRightStart) {
     html = html.slice(0, topbarRightStart) + html.slice(topbarRightEnd);
   }
+  const topbarStart = html.indexOf('<div class="topbar">');
+  const topbarEnd = findClosingDiv(html, topbarStart);
+  if (topbarStart >= 0 && topbarEnd > topbarStart) {
+    html = html.slice(0, topbarStart) + html.slice(topbarEnd);
+  }
   html = html.replace(/\s*body:not\(\.show-archive\)[\s\S]*?#tool-imagegen \{ display:none !important; \}/, '');
   html = html.replace(/function toggleArchiveView\(\) \{[\s\S]*?\n\}/, '');
   html = html.replace(/\s*<div class="tnav-item" onclick="location\.href='\/production'">QUICK VIDEO<\/div>/, '');
@@ -70,6 +75,8 @@ function prepareNanaStudioHtml(source) {
   html = html.replace('<div id="ace-history" style="display:flex;flex-direction:column;gap:6px;">', '<div id="ace-history" style="display:flex;flex-direction:column;gap:6px;"><div class="muted" style="font-size:9px;padding:8px 0;">No completed local jobs yet. History appears only after a real WAN2GP result.</div>');
   html = html.replace('      <!-- Output preview -->', '      <!-- Output preview · moved to top by ANIMILL adapter -->');
   html = html.replace('<div id="gen-output-actions" style="display:none;padding:10px 12px;border-top:1px solid var(--border);display:none;gap:6px;flex-wrap:wrap;">', '<div id="gen-output-actions" style="display:none;padding:10px 12px;border-top:1px solid var(--border);gap:6px;flex-wrap:wrap;">');
+  html = html.replace(/\s*<!-- Cost estimate -->[\s\S]*?<\/div>\s*\n\s*<!-- GENERATE BUTTON -->/, '\n      <!-- GENERATE BUTTON -->');
+  html = html.replace(/\s*<div style="margin-top:8px;font-size:9px;color:var\(--muted\);font-family:var\(--font-mono\);padding:6px;background:var\(--surface2\);border-radius:var\(--r-sm\);" id="engine-desc">[\s\S]*?<\/div>/, '');
   html = html.replace(/\s*<div class="tnav-item" onclick="navScrollTo\('tool-(?:music|prompts|project|wangp)'\)">[^<]*<\/div>/g, '');
   html = html.replace(/\s*<div class="tnav-item" id="archive-toggle" onclick="toggleArchiveView\(\)">ARCHIVE<\/div>/, '');
   const toolsStart = html.indexOf('  const NANA_TOOLS = [');
@@ -87,6 +94,11 @@ function prepareNanaStudioHtml(source) {
       });
       html = html.slice(0, toolsStart) + rebuilt + html.slice(toolsEnd);
     }
+  }
+  const costStart = html.indexOf('function updateGenCost() {');
+  const loadImageStart = html.indexOf('function loadGenImage(', costStart);
+  if (costStart >= 0 && loadImageStart > costStart) {
+    html = html.slice(0, costStart) + 'function updateGenCost() {}\n\n' + html.slice(loadImageStart);
   }
   html = html.replace('  window.NANA_TOOLS = NANA_TOOLS.filter(function (t) { return [\'project\',\'music\',\'wangp\',\'prompts\'].indexOf(t.id) < 0; });', '  window.NANA_TOOLS = NANA_TOOLS;');
   const audFileStart = html.indexOf('function loadAudacityFile(input) {');
@@ -196,9 +208,6 @@ function audExportToLibrary() {
 })();
 </script>`;
   html = html.replace('</body>', honestScript + '\n</body>');
-  const audit = '<div class="card nana-operational-audit" style="margin:0 0 14px;padding:12px;border-left:2px solid var(--mint);"><div class="card-title">OPERATIONAL AUDIT</div><div class="muted" style="font-size:9px;line-height:1.6;margin-top:6px;"><b style="color:var(--mint);">Wav2Lip</b> uses the real local NANA backend via <code>/api/lipsync</code> and job polling. <b style="color:var(--gold);">Veo / Sync.so</b> remain provider-gated until connected. <b style="color:var(--gold);">ACE-Step / WAN2GP</b> require a detected local service. No sample output or simulated completion is shown.</div></div>';
-  const firstGrid = html.indexOf('  <div class="generator-grid"');
-  if (firstGrid >= 0 && !html.includes('nana-operational-audit')) html = html.slice(0, firstGrid) + audit + html.slice(firstGrid);
   return html;
 }
 const localAssetBase = () => `http://127.0.0.1:${port}`;
