@@ -89,7 +89,7 @@ function prepareNanaStudioHtml(source) {
   html = html.replace('<div id="gen-output-actions" style="display:none;padding:10px 12px;border-top:1px solid var(--border);display:none;gap:6px;flex-wrap:wrap;">', '<div id="gen-output-actions" style="display:none;padding:10px 12px;border-top:1px solid var(--border);gap:6px;flex-wrap:wrap;">');
   html = html.replace(/\s*<!-- Cost estimate -->[\s\S]*?<\/div>\s*\n\s*<!-- GENERATE BUTTON -->/, '\n      <!-- GENERATE BUTTON -->');
   html = html.replace(/\s*<div style="margin-top:8px;font-size:9px;color:var\(--muted\);font-family:var\(--font-mono\);padding:6px;background:var\(--surface2\);border-radius:var\(--r-sm\);" id="engine-desc">[\s\S]*?<\/div>/, '');
-  html = html.replace('</style>', '.nana-output-top-card { width:100%; margin:0 0 14px; } .nana-output-top-card #gen-output-area { aspect-ratio:auto !important; min-height:calc(100vh - 92px); max-height:none !important; } .nana-settings-menu { margin:0 0 18px; border:1px solid var(--border); background:var(--surface); } .nana-settings-menu > summary { cursor:pointer; list-style:none; padding:10px 12px; font:10px var(--font-mono); letter-spacing:2px; color:var(--muted); } .nana-settings-menu > summary::-webkit-details-marker { display:none; } .nana-settings-menu > summary::after { content:"+"; float:right; color:var(--accent); } .nana-settings-menu[open] > summary::after { content:"−"; } .nana-settings-content { padding:0 12px 12px; } .generator-body.settings-open .nana-output-top-card #gen-output-area { min-height:320px; max-height:60vh !important; } </style>');
+  html = html.replace('</style>', '.layout { padding-top:0 !important; } .main { padding-top:0 !important; } .nana-output-top-card { width:100%; margin:0 0 14px; } .nana-output-top-card #gen-output-area { aspect-ratio:auto !important; min-height:calc(100vh - 92px); max-height:none !important; } .nana-settings-menu { margin:0 0 18px; border:1px solid var(--border); background:var(--surface); } .nana-settings-menu > summary { cursor:pointer; list-style:none; padding:10px 12px; font:10px var(--font-mono); letter-spacing:2px; color:var(--muted); } .nana-settings-menu > summary::-webkit-details-marker { display:none; } .nana-settings-menu > summary::after { content:"+"; float:right; color:var(--accent); } .nana-settings-menu[open] > summary::after { content:"−"; } .nana-settings-content { padding:0 12px 12px; } .generator-body.settings-open .nana-output-top-card #gen-output-area { min-height:320px; max-height:60vh !important; } #tool-lipsync > .section-body { display:none; } #tool-lipsync > .section-body:not(.minimized) { display:block; } </style>');
   html = html.replace(/\s*<div class="tnav-item" onclick="navScrollTo\('tool-(?:music|prompts|project|wangp)'\)">[^<]*<\/div>/g, '');
   html = html.replace(/\s*<div class="tnav-item" id="archive-toggle" onclick="toggleArchiveView\(\)">ARCHIVE<\/div>/, '');
   const toolsStart = html.indexOf('  const NANA_TOOLS = [');
@@ -209,6 +209,23 @@ function audExportToLibrary() {
     settingsMenu.open = false;
     generatorBody.classList.remove('settings-open');
     settingsMenu.addEventListener('toggle', function () { generatorBody.classList.toggle('settings-open', settingsMenu.open); });
+  }
+  var generatorSection = document.getElementById('generator');
+  if (generatorSection) generatorSection.style.marginTop = '0';
+  var lipsyncSection = document.getElementById('tool-lipsync');
+  var lipsyncBody = document.getElementById('tool-lipsync-body');
+  if (lipsyncSection) {
+    lipsyncSection.style.marginTop = '0';
+    lipsyncSection.style.paddingTop = '0';
+  }
+  if (lipsyncBody) {
+    lipsyncBody.classList.add('minimized');
+    var lipsyncToggle = lipsyncBody.previousElementSibling && lipsyncBody.previousElementSibling.querySelector('.minimize-btn');
+    if (lipsyncToggle) {
+      lipsyncToggle.innerHTML = '&#43;';
+      lipsyncToggle.setAttribute('aria-label', 'Expand Wav2Lip Lip-Sync');
+      lipsyncToggle.title = 'Expand';
+    }
   }
   var aud = document.getElementById('audioeditor');
   if (aud) {
