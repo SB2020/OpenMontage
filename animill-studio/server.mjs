@@ -58,6 +58,12 @@ function prepareNanaStudioHtml(source) {
   if (topbarStart >= 0 && topbarEnd > topbarStart) {
     html = html.slice(0, topbarStart) + html.slice(topbarEnd);
   }
+  const generatorSectionStart = html.indexOf('<div class="section" id="generator"');
+  const generatorHeadStart = html.indexOf('  <div class="section-head">', generatorSectionStart);
+  const generatorBodyMarkup = html.indexOf('  <div class="section-body" id="generator-body">', generatorHeadStart);
+  if (generatorHeadStart >= 0 && generatorBodyMarkup > generatorHeadStart) {
+    html = html.slice(0, generatorHeadStart) + html.slice(generatorBodyMarkup);
+  }
   html = html.replace(/\s*body:not\(\.show-archive\)[\s\S]*?#tool-imagegen \{ display:none !important; \}/, '');
   html = html.replace(/function toggleArchiveView\(\) \{[\s\S]*?\n\}/, '');
   html = html.replace(/\s*<div class="tnav-item" onclick="location\.href='\/production'">QUICK VIDEO<\/div>/, '');
@@ -199,7 +205,11 @@ function audExportToLibrary() {
   if (aceLabel) aceLabel.textContent = 'NO COMPLETED LOCAL OUTPUT';
   var generatorBody = document.getElementById('generator-body');
   var settingsMenu = document.querySelector('.nana-settings-menu');
-  if (generatorBody && settingsMenu) settingsMenu.addEventListener('toggle', function () { generatorBody.classList.toggle('settings-open', settingsMenu.open); });
+  if (generatorBody && settingsMenu) {
+    settingsMenu.open = false;
+    generatorBody.classList.remove('settings-open');
+    settingsMenu.addEventListener('toggle', function () { generatorBody.classList.toggle('settings-open', settingsMenu.open); });
+  }
   var aud = document.getElementById('audioeditor');
   if (aud) {
     var offline = document.getElementById('aud-offline-banner');
