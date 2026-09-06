@@ -43,9 +43,43 @@ function prepareNanaStudioHtml(source) {
   const generatorEnd = findClosingDiv(html, generatorStart);
   const scriptTailStart = html.indexOf('<script>', generatorEnd);
   if (layoutStart >= 0 && mainStart > layoutStart && generatorStart > mainStart && generatorEnd > generatorStart && scriptTailStart > generatorEnd) {
-    const topbar = html.slice(0, layoutStart);
+    let topbar = html.slice(0, layoutStart);
     const generator = html.slice(generatorStart, generatorEnd);
-    const scripts = html.slice(scriptTailStart);
+    let scripts = html.slice(scriptTailStart);
+    const stripRuntimeBetween = function (value, startMarker, endMarker) {
+      const start = value.indexOf(startMarker);
+      const end = value.indexOf(endMarker, start + startMarker.length);
+      if (start < 0 || end <= start) return value;
+      return value.slice(0, start) + value.slice(end);
+    };
+    // These runtimes belong to the retired archive/tools and must not ship in the
+    // focused Generator + Wav2Lip surface. The source-of-record remains untouched.
+    [
+      ['// ── PRICING ──', '// ── ACE-STEP ──'],
+      ['// ── ACE-STEP ──', '// ── VIDEO FEED ──'],
+      ['// ── VIDEO FEED ──', '// ── MINIMIZE / TOGGLE ──'],
+      ['// ── CONTENT INGESTION ──', '// ── TOPBAR NAV ACTIVE ON SCROLL ──'],
+      ['// Auto-prompt generator', '</script>']
+    ].forEach(function (range) { scripts = stripRuntimeBetween(scripts, range[0], range[1]); });
+    scripts = scripts.replace(/engine: 'syncso'/g, "engine: 'veo3fast'");
+    scripts = scripts.replace(/genState\.engine \|\| 'syncso'/g, "genState.engine || 'veo3fast'");
+    scripts = scripts.replace(/\s*var engineDesc = document\.getElementById\('engine-desc'\);\s*/g, '\n');
+    scripts = scripts.replace(/\s*var descs = \{[\s\S]*?\n  \};\s*var desc = document\.getElementById\('engine-desc'\);\s*if \(desc\) desc\.textContent = descs\[eng\] \|\| '';\s*/g, '\n');
+    scripts = scripts.replace(/\s*addToVideoFeed\(job\);/g, '');
+    scripts = scripts.replace(/if \(false\) \{  \/\/ lipsync-full removed — all engines native\r?\n[\s\S]*?\r?\n    \} else \{\r?\n([\s\S]*?)\r?\n    \}/g, '$1');
+    scripts = scripts.replace(/\s*if \(false\) \{  \/\/ lipsync-full removed — all engines native\r?\n[\s\S]*?\r?\n      \}\s*/g, '\n');
+    scripts = scripts.replace(/lipsync-full/g, 'native-lipsync');
+    scripts = scripts.replace(/\(eng === 'native-lipsync'\) \? 'GENERATE — FULL LIPSYNC' : 'GENERATE'/g, "'GENERATE'");
+    const styleEnd = topbar.indexOf('</style>');
+    if (styleEnd >= 0) {
+      let styles = topbar.slice(0, styleEnd);
+      [
+        ['/* ── CONTENT INGESTION ── */', '/* ── PREVENT SECTION FLASH ── */'],
+        ['/* ── HERO FEED ── */', '/* ── DAW TIMELINE ── */'],
+        ['/* ── DAW TIMELINE ── */', '/* ── PILL GROUP ── */']
+      ].forEach(function (range) { styles = stripRuntimeBetween(styles, range[0], range[1]); });
+      topbar = styles + topbar.slice(styleEnd);
+    }
     html = topbar + '<div class="layout"><div class="main">\n' + generator + '\n</div></div>\n' + scripts;
   }
   const topbarRightStart = html.indexOf('<div class="topbar-right">');
@@ -226,21 +260,6 @@ function audExportToLibrary() {
       lipsyncToggle.setAttribute('aria-label', 'Expand Wav2Lip Lip-Sync');
       lipsyncToggle.title = 'Expand';
     }
-  }
-  var aud = document.getElementById('audioeditor');
-  if (aud) {
-    var offline = document.getElementById('aud-offline-banner');
-    var guard = function (event) {
-      if (event) event.preventDefault();
-      notify('Audacity is an external pipe bridge; connect mod-script-pipe before editing or export.');
-    };
-    aud.querySelectorAll('[onclick^="audAction"], [onclick^="audRunPipe"], [onclick^="audExportToLibrary"]').forEach(function (el) {
-      el.removeAttribute('onclick');
-      el.setAttribute('aria-disabled', 'true');
-      el.style.opacity = '0.45';
-      el.onclick = guard;
-    });
-    if (offline) offline.insertAdjacentHTML('afterbegin', '<div class="muted" style="font-size:9px;line-height:1.5;margin-bottom:8px;">External bridge only. No in-browser edit/export simulation is enabled.</div>');
   }
 })();
 </script>`;
